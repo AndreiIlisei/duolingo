@@ -7,6 +7,7 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
 } from "drizzle-orm/pg-core";
 
 export const courses = pgTable("courses", {
@@ -124,7 +125,7 @@ export const userProgress = pgTable("user_progress", {
     onDelete: "cascade",
   }),
   hearts: integer("hearts").notNull().default(5),
-  points: integer("points").notNull().default(0),
+  points: integer("points").notNull().default(100),
 });
 
 export const userProgressRelations = relations(userProgress, ({ one }) => ({
@@ -133,3 +134,19 @@ export const userProgressRelations = relations(userProgress, ({ one }) => ({
     references: [courses.id],
   }),
 }));
+
+export const userSubscription = pgTable("user_subscription", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().unique(),
+  stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+  stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
+  stripePriceId: text("stripe_price_id").notNull(),
+  stripeCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
+});
+
+// export const userSubscriptionRelations = relations(userSubscription, ({ one }) => ({
+//   user: one(userProgress, {
+//     fields: [userSubscription.userId],
+//     references: [userProgress.userId],
+//   }),
+// }));
