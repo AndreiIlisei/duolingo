@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { challengeOptions, challenges } from "@/database/schema";
+import {
+  challengeOptions,
+  challenges,
+  userSubscription,
+} from "@/database/schema";
 import { useEffect, useState, useTransition } from "react";
 
 import { Header } from "./header";
@@ -30,7 +34,11 @@ type Props = {
     completed: boolean;
     challengeOptions: (typeof challengeOptions.$inferSelect)[];
   })[];
-  userSubscription: any; // TODO: Replace with subscription DB type
+  userSubscription:
+    | (typeof userSubscription.$inferSelect & {
+        isActive: boolean;
+      })
+    | null;
 };
 
 export const Quiz = ({
