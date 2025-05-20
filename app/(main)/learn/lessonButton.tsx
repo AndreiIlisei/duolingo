@@ -48,6 +48,7 @@ export const LessonButton = ({
 
   const href = isCompleted ? `/lesson/${id}` : "/lesson";
 
+  
   return (
     <Link
       href={href}

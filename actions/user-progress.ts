@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import db from "@/database/drizzle";
@@ -51,6 +50,8 @@ export const upsertUserProgress = async (courseId: number) => {
     activeCourseId: courseId,
     userName: user.firstName || "User",
     userImageSrc: user.imageUrl || "/mascot.svg",
+    hearts: 5,
+    points: 0,
   });
 
   revalidatePath("/courses");

@@ -17,7 +17,7 @@ const LessonPage = async () => {
     userSubscriptionData,
   ]);
 
-  if (!lesson || !userProgress || !userSubscription) {
+  if (!lesson || !userProgress) {
     redirect("/learn");
   }
 
