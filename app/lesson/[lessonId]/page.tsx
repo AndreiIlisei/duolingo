@@ -3,12 +3,13 @@ import { redirect } from "next/navigation";
 import { Quiz } from "../quiz";
 
 type Props = {
-  params: {
+  params: Promise<{
     lessonId: number;
-  };
+  }>;
 };
 
-const LessonIdPage = async ({ params }: Props) => {
+const LessonIdPage = async (props: Props) => {
+  const params = await props.params;
   const lessonData = getLesson(params.lessonId);
   const userProgressData = getUserProgress();
   const userSubscriptionData = getUserSubscription();
