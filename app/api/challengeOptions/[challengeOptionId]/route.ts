@@ -11,9 +11,10 @@ export async function GET(
   props: { params: Promise<{ challengeOptionId: string }> }
 ) {
   const params = await props.params;
-  //   if (!isAuthorized()) {
-  //     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-  //   }
+
+  if (!isAuthorized()) {
+    return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+  }
 
   const id = await Number(params.challengeOptionId); // ✅ safe to access here
 
@@ -23,25 +24,6 @@ export async function GET(
 
   return NextResponse.json(data);
 }
-
-// export async function GET({
-//   req,
-//   // { params }: { params: { challengeOptionId: number } }
-//   params,
-// }: Readonly<{ req: NextRequest; params: { challengeOptionId: number } }>) {
-//   if (!isAuthorized()) {
-//     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-//   }
-
-//   const param = await params;
-//   const challengeOptionId = param.challengeOptionId;
-
-//   const data = await db.query.challengeOptions.findFirst({
-//     where: eq(challengeOptions.id, challengeOptionId),
-//   });
-
-//   return NextResponse.json(data);
-// }
 
 export const PUT = async (
   req: NextRequest,
