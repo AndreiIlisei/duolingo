@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
+export const DAY_IN_MS = 86_400_000;
 export const maxHearts = 5;
 export const POINTS_TO_REFILL = 10;
 
