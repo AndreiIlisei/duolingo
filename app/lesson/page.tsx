@@ -2,7 +2,7 @@ import {
   getLesson,
   getUserProgress,
   getUserSubscription,
-} from "@/database/queries";
+} from "@/queries/queries";
 import { redirect } from "next/navigation";
 import { Quiz } from "./quiz";
 

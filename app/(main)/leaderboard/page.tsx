@@ -1,10 +1,5 @@
 import { StickyWrapper } from "@/components/stickyWrapper";
 import { UserProgress } from "@/components/userProgress";
-import {
-  getTopTenUsers,
-  getUserProgress,
-  getUserSubscription,
-} from "@/database/queries";
 import { redirect } from "next/navigation";
 import { FeedWrapper } from "@/components/feedWrapper";
 import Image from "next/image";
@@ -12,6 +7,11 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Promotions } from "@/components/promotions";
 import { Quests } from "@/components/quests";
+import {
+  getTopTenUsers,
+  getUserProgress,
+  getUserSubscription,
+} from "@/queries/queries";
 
 const LeaderboardPage = async () => {
   const userProgressData = await getUserProgress();

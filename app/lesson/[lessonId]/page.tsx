@@ -1,4 +1,4 @@
-import { getLesson, getUserProgress, getUserSubscription } from "@/database/queries";
+import { getLesson, getUserProgress, getUserSubscription } from "@/queries/queries";
 import { redirect } from "next/navigation";
 import { Quiz } from "../quiz";
 

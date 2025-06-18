@@ -1,5 +1,5 @@
 import db from "../../database/drizzle";
-import { getUserProgress } from "@/database/queries";
+import { getUserProgress } from "@/queries/queries";
 import { units, challengeProgress } from "@/database/schema";
 import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";

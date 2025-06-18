@@ -2,7 +2,7 @@
 "use server";
 
 import db from "@/database/drizzle";
-import { getUserProgress, getUserSubscription } from "@/database/queries";
+import { getUserProgress, getUserSubscription } from "@/queries/queries";
 import { challengeProgress, challenges, userProgress } from "@/database/schema";
 import { maxHearts } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";

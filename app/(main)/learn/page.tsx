@@ -8,7 +8,7 @@ import {
   getUnits,
   getUserProgress,
   getUserSubscription,
-} from "@/database/queries";
+} from "@/queries/queries";
 import { redirect } from "next/navigation";
 import { Unit } from "./unit";
 import { Promotions } from "@/components/promotions";
