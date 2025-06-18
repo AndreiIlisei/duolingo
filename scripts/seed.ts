@@ -21,26 +21,67 @@ const main = async () => {
     await db.delete(schema.challengeProgress);
     await db.delete(schema.userSubscription);
 
+    // Step 1: Insert learning paths
+    await db.insert(schema.learningPaths).values([
+      {
+        type: "classic",
+        title: "Classic Path",
+        description: "Learn through structured lessons and challenges",
+        order: 1,
+      },
+      {
+        type: "srs",
+        title: "Spaced Repetition",
+        description: "Review based on your memory strength",
+        order: 2,
+      },
+      {
+        type: "immersion",
+        title: "Culture Immersion",
+        description: "Learn through videos, news, and real-world content",
+        order: 3,
+      },
+      {
+        type: "targeted",
+        title: "Targeted Learning",
+        description: "Language for travelers, professionals, or specific needs",
+        order: 4,
+      },
+    ]);
+
+    // Step 2: Fetch inserted learning paths
+    const paths = await db.query.learningPaths.findMany();
+    const classicPath = paths.find((p) => p.type === "classic");
+
+    if (!classicPath) {
+      throw new Error("Classic learning path not found");
+    }
+
+    // Step 3: Insert courses with learningPathId
     await db.insert(schema.courses).values([
       {
         id: 1,
         title: "Spanish",
         imageSrc: "/es.svg",
+        learningPathId: classicPath?.id,
       },
       {
         id: 2,
         title: "Danish",
         imageSrc: "/dk.svg",
+        learningPathId: classicPath?.id,
       },
       {
         id: 3,
         title: "French",
         imageSrc: "/fr.svg",
+        learningPathId: classicPath?.id,
       },
       {
         id: 4,
         title: "English",
         imageSrc: "/gb.svg",
+        learningPathId: classicPath?.id,
       },
     ]);
 
@@ -165,6 +206,11 @@ const main = async () => {
     ]);
 
     console.log("Seeding finished");
+
+    const joinedCourses = await db.query.courses.findMany({
+      with: { learningPath: true },
+    });
+    console.log("Courses with paths:", joinedCourses);
   } catch (error) {
     console.error(error);
     throw new Error("Failed to seed the database");

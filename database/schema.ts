@@ -5,3 +5,4 @@ export * from "./core/challenges";
 export * from "./core/challengeProgress";
 export * from "./users/userProgress";
 export * from "./users/userSubscription";
+export * from "./core/learningPaths";
