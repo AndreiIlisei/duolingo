@@ -8,11 +8,14 @@ import {
   getUnits,
   getUserProgress,
   getUserSubscription,
+  getLearningPaths,
 } from "@/queries/queries";
 import { redirect } from "next/navigation";
 import { Unit } from "./unit";
 import { Promotions } from "@/components/promotions";
 import { Quests } from "@/components/quests";
+import LearningPaths from "./learningPath";
+
 
 const LearnPage = async () => {
   const userProgressData = getUserProgress();
@@ -20,6 +23,9 @@ const LearnPage = async () => {
   const lessonPercentageData = getLessonPercentage();
   const unitsData = getUnits();
   const userSubscriptionData = getUserSubscription();
+  const learningPathsData = getLearningPaths();
+  
+  // console.log(learningPathsData);
 
   const [
     userProgress,
@@ -27,14 +33,18 @@ const LearnPage = async () => {
     courseProgress,
     lessonPercentage,
     userSubscription,
+    learningPaths,
   ] = await Promise.all([
     userProgressData,
     unitsData,
     courseProgressData,
     lessonPercentageData,
     userSubscriptionData,
+    learningPathsData,
   ]);
-  
+
+  // console.log(learningPaths);
+
   if (!userProgress || !userProgress.activeCourse) {
     redirect("/courses");
   }
@@ -61,7 +71,26 @@ const LearnPage = async () => {
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
 
-        {units.map((unit) => {
+        <LearningPaths />
+
+        {/* {learningPaths.map((learningPath) => {
+          return (
+            <div key={learningPath.id} className="mb-10">
+              {learningPath.title}
+              <LearningPaths />
+              <Unit
+                id={learningPath.id}
+                order={learningPath.order}
+                description={unit.description}
+                title={unit.title}
+                lessons={unit.lessons}
+                activeLesson={courseProgress.activeLesson}
+                activeLessonPercentage={lessonPercentage}
+              />
+            </div>
+          );
+        })} */}
+        {/* {units.map((unit) => {
           return (
             <div key={unit.id} className="mb-10">
               <Unit
@@ -75,7 +104,7 @@ const LearnPage = async () => {
               />
             </div>
           );
-        })}
+        })} */}
       </FeedWrapper>
     </div>
   );
