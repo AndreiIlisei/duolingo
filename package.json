@@ -30,6 +30,7 @@
     "lucide-react": "^0.469.0",
     "next": "15.1.2",
     "next-themes": "^0.4.4",
+    "postgres": "^3.4.7",
     "ra-data-simple-rest": "^5.8.2",
     "react": "^18.3.1",
     "react-admin": "^5.8.2",

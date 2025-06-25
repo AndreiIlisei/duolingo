@@ -1,21 +1,23 @@
 import { pgTable, integer, text, serial } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { courses, lessons } from "../schema";
+import { lessons, sections } from "../schema";
+
+// console.log(sections)
 
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
-  title: text("title").notNull(), // Unit 1
-  description: text("description").notNull(), // Learn the basics of spanish
-  courseId: integer("course_id")
-    .references(() => courses.id, { onDelete: "cascade" })
-    .notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
   order: integer("order").notNull(),
+  sectionId: integer("section_id")
+    .references(() => sections.id, { onDelete: "cascade" })
+    .notNull(),
 });
 
-export const unitsRelations = relations(units, ({ many, one }) => ({
-  course: one(courses, {
-    fields: [units.courseId],
-    references: [courses.id],
+export const unitsRelations = relations(units, ({ one, many }) => ({
+  section: one(sections, {
+    fields: [units.sectionId],
+    references: [sections.id],
   }),
   lessons: many(lessons),
 }));

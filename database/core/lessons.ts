@@ -5,10 +5,10 @@ import { units, challenges } from "../schema";
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  order: integer("order").notNull(),
   unitId: integer("unit_id")
     .references(() => units.id, { onDelete: "cascade" })
     .notNull(),
-  order: integer("order").notNull(),
 });
 
 export const lessonsRelations = relations(lessons, ({ one, many }) => ({
@@ -16,5 +16,5 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
     fields: [lessons.unitId],
     references: [units.id],
   }),
-  challenges: many(challenges),
+  challenges: many(challenges), // if applicable
 }));
