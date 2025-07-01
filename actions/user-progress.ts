@@ -1,58 +1,79 @@
 "use server";
 
 import db from "@/database/drizzle";
-import { challengeProgress, challenges, userProgress } from "@/database/schema";
+import {
+  challengeProgress,
+  challenges,
+  learningPaths,
+  userProgress,
+} from "@/database/schema";
 import { POINTS_TO_REFILL } from "@/lib/utils";
-import { getCourseById, getUserProgress, getUserSubscription } from "@/queries/queries";
+import {
+  getCourseById,
+  getUserProgress,
+  getUserSubscription,
+} from "@/queries/queries";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export const upsertUserProgress = async (courseId: number) => {
-  const { userId } = await auth(); // Authenticate the user and get the userId
-  const user = await currentUser(); // Fetch the current user details
+export const upsertUserProgress = async (
+  courseId: number
+): Promise<boolean> => {
+  try {
+    // 1 ▸ Auth
+    const { userId } = await auth();
+    const user = await currentUser();
 
-  if (!userId || !user) {
-    throw new Error("Unauthorized"); // Throw an error if the user is not authenticated
-  }
+    if (!userId || !user) throw new Error("Unauthorized");
 
-  const course = await getCourseById(courseId); // Fetch the course by its ID
+    // 2 ▸ Confirm course exists
+    const course = await getCourseById(courseId);
+    if (!course) throw new Error(`Course ${courseId} not found`);
 
-  if (!course) {
-    throw new Error("Course not found"); // Throw an error if the course does not exist
-  }
-
-  if (!course.units.length || !course.units[0].lessons.length) {
-    throw new Error("Course is empty");
-  }
-
-  const existingUserProgress = await getUserProgress();
-
-  if (existingUserProgress) {
-    await db.update(userProgress).set({
-      activeCourseId: courseId,
-      userName: user.firstName || "User",
-      userImageSrc: user.imageUrl || "/mascot.svg",
+    // 3 ▸ Pick default path for that course
+    const path = await db.query.learningPaths.findFirst({
+      where: and(
+        eq(learningPaths.courseId, courseId),
+        eq(learningPaths.type, "classic") // default path
+      ),
     });
 
+    if (!path) throw new Error("No learning path for this course");
+
+    // 4 ▸ Upsert with one DB call
+    await db
+      .insert(userProgress)
+      .values({
+        userId,
+        activeCourseId: courseId,
+        activeLearningPathId: path.id,
+        userName: user.firstName || "User",
+        userImageSrc: user.imageUrl || "/mascot.svg",
+        hearts: 5,
+        points: 0,
+      })
+      .onConflictDoUpdate({
+        target: userProgress.userId, // composite PK or unique key
+        set: {
+          activeCourseId: courseId,
+          activeLearningPathId: path.id,
+          userName: user.firstName || "User",
+          userImageSrc: user.imageUrl || "/mascot.svg",
+        },
+      });
+
+    // 5 ▸ Revalidate pages & navigate
     revalidatePath("/courses");
     revalidatePath("/learn");
-    redirect("/learn");
+
+    console.log("upsertUserProgress success");
+
+    return true; // caller can redirect or toast on success
+  } catch (err) {
+    console.error("upsertUserProgress error:", err);
+    return false; // caller can show error toast
   }
-
-  await db.insert(userProgress).values({
-    userId,
-    activeCourseId: courseId,
-    userName: user.firstName || "User",
-    userImageSrc: user.imageUrl || "/mascot.svg",
-    hearts: 5,
-    points: 0,
-  });
-
-  revalidatePath("/courses");
-  revalidatePath("/learn");
-  redirect("/learn");
 };
 
 export const reduceHearts = async (challengeId: number) => {

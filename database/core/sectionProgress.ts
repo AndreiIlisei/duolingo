@@ -22,16 +22,16 @@ export const sectionProgress = pgTable(
   })
 );
 
-export const sectionProgressRelations = relations(
-  sectionProgress,
-  ({ one }) => ({
-    user: one(userProgress, {
-      fields: [sectionProgress.userId],
-      references: [userProgress.userId],
-    }),
-    section: one(sections, {
-      fields: [sectionProgress.sectionId],
-      references: [sections.id],
-    }),
-  })
-);
+// export const sectionProgressRelations = relations(
+//   sectionProgress,
+//   ({ one }) => ({
+//     user: one(userProgress, {
+//       fields: [sectionProgress.userId],
+//       references: [userProgress.userId],
+//     }),
+//     section: one(sections, {
+//       fields: [sectionProgress.sectionId],
+//       references: [sections.id],
+//     }),
+//   })
+// );

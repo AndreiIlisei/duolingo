@@ -11,68 +11,87 @@ export const getCourses = cache(async () => {
   return data;
 });
 
-export const getCourseById = cache(async (courseId: number) => {
-  const data = await db.query.courses.findFirst({
-    where: eq(courses.id, courseId),
-    with: {
-      units: {
-        orderBy: (units, { asc }) => [asc(units.order)],
-        with: {
-          lessons: {
-            orderBy: (lessons, { asc }) => [asc(lessons.order)],
-          },
-        },
-      },
-    },
-  });
+// export const getCourseById = cache(async (courseId: number) => {
+//   const data = await db.query.courses.findFirst({
+//     where: eq(courses.id, courseId),
+//     with: {
+//       units: {
+//         orderBy: (units, { asc }) => [asc(units.order)],
+//         with: {
+//           lessons: {
+//             orderBy: (lessons, { asc }) => [asc(lessons.order)],
+//           },
+//         },
+//       },
+//     },
+//   });
 
-  return data;
+//   return data;
+// });
+
+export const getCourseById = cache(async (courseId: number) => {
+  return db.query.courses.findFirst({
+    where: eq(courses.id, courseId),
+    // with: {
+    //   learningPaths: true, // only fetch paths for now
+    //   // add sections/units later
+    // },
+  });
 });
 
 export const getCourseProgress = cache(async () => {
-  const { userId } = await auth();
-  const userProgress = await getUserProgress();
+  const { userId }   = await auth();
+  const progress     = await getUserProgress();
+  if (!userId || !progress?.activeLearningPathId) return null;
 
-  if (!userId || !userProgress?.activeCourseId) {
-    return null;
-  }
-
-  const unitsInActiveCourse = await db.query.units.findMany({
-    orderBy: (units, { asc }) => [asc(units.order)],
-    where: eq(units.courseId, userProgress.activeCourseId),
-    with: {
-      lessons: {
-        orderBy: (lessons, { asc }) => [asc(lessons.order)],
-        with: {
-          unit: true,
-          challenges: {
-            with: {
-              challengeProgress: {
-                where: eq(challengeProgress.userId, userId),
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  const firstUncompletedLesson = unitsInActiveCourse
-    .flatMap((unit) => unit.lessons)
-    .find((lesson) => {
-      return lesson.challenges.some((challenge) => {
-        return (
-          !challenge.challengeProgress ||
-          challenge.challengeProgress.length === 0 ||
-          challenge.challengeProgress.some(
-            (progress) => progress.completed === false
-          )
-        );
-      });
-    });
-
-  return {
-    activeLesson: firstUncompletedLesson,
-    activeLessonId: firstUncompletedLesson?.id,
-  };
+  // if sections/units not seeded, just return a stub:
+  return { activeLesson: null, activeLessonId: null };
 });
+
+// export const getCourseProgress = cache(async () => {
+//   const { userId } = await auth();
+//   const userProgress = await getUserProgress();
+
+//   if (!userId || !userProgress?.activeCourseId) {
+//     return null;
+//   }
+
+//   const unitsInActiveCourse = await db.query.units.findMany({
+//     orderBy: (units, { asc }) => [asc(units.order)],
+//     where: eq(units.courseId, userProgress.activeCourseId),
+//     with: {
+//       lessons: {
+//         orderBy: (lessons, { asc }) => [asc(lessons.order)],
+//         with: {
+//           unit: true,
+//           challenges: {
+//             with: {
+//               challengeProgress: {
+//                 where: eq(challengeProgress.userId, userId),
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//   });
+
+//   const firstUncompletedLesson = unitsInActiveCourse
+//     .flatMap((unit) => unit.lessons)
+//     .find((lesson) => {
+//       return lesson.challenges.some((challenge) => {
+//         return (
+//           !challenge.challengeProgress ||
+//           challenge.challengeProgress.length === 0 ||
+//           challenge.challengeProgress.some(
+//             (progress) => progress.completed === false
+//           )
+//         );
+//       });
+//     });
+
+//   return {
+//     activeLesson: firstUncompletedLesson,
+//     activeLessonId: firstUncompletedLesson?.id,
+//   };
+// });

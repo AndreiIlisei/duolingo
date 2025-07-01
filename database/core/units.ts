@@ -14,10 +14,10 @@ export const units = pgTable("units", {
     .notNull(),
 });
 
-export const unitsRelations = relations(units, ({ one, many }) => ({
-  section: one(sections, {
-    fields: [units.sectionId],
-    references: [sections.id],
-  }),
-  lessons: many(lessons),
-}));
+// export const unitsRelations = relations(units, ({ one, many }) => ({
+//   section: one(sections, {
+//     fields: [units.sectionId],
+//     references: [sections.id],
+//   }),
+//   lessons: many(lessons),
+// }));

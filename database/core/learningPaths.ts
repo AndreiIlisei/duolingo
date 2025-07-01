@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, serial, text, integer, pgEnum } from "drizzle-orm/pg-core";
-import { courses, sections } from "../schema";
+// import { courses, sections } from "../schema";
+import { courses } from "./courses";
 
 export const learningPathEnum = pgEnum("learning_path", [
   "classic",
@@ -20,13 +21,9 @@ export const learningPaths = pgTable("learning_paths", {
     .notNull(),
 });
 
-export const learningPathsRelations = relations(
-  learningPaths,
-  ({ one, many }) => ({
-    course: one(courses, {
-      fields: [learningPaths.courseId],
-      references: [courses.id],
-    }),
-    sections: many(sections),
-  })
-);
+export const learningPathsRelations = relations(learningPaths, ({ one }) => ({
+  course: one(courses, {
+    fields: [learningPaths.courseId],
+    references: [courses.id],
+  }),
+}));

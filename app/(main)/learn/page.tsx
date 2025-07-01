@@ -18,46 +18,46 @@ import LearningPaths from "./learningPath";
 
 
 const LearnPage = async () => {
-  const userProgressData = getUserProgress();
-  const courseProgressData = getCourseProgress();
-  const lessonPercentageData = getLessonPercentage();
-  const unitsData = getUnits();
-  const userSubscriptionData = getUserSubscription();
-  const learningPathsData = getLearningPaths();
+  // const userProgressData = getUserProgress();
+  // const courseProgressData = getCourseProgress();
+  // const lessonPercentageData = getLessonPercentage();
+  // const unitsData = getUnits();
+  // const userSubscriptionData = getUserSubscription();
+  // const learningPathsData = getLearningPaths();
   
   // console.log(learningPathsData);
 
-  const [
-    userProgress,
-    units,
-    courseProgress,
-    lessonPercentage,
-    userSubscription,
-    learningPaths,
-  ] = await Promise.all([
-    userProgressData,
-    unitsData,
-    courseProgressData,
-    lessonPercentageData,
-    userSubscriptionData,
-    learningPathsData,
-  ]);
+  // const [
+  //   userProgress,
+  //   units,
+  //   courseProgress,
+  //   lessonPercentage,
+  //   userSubscription,
+  //   learningPaths,
+  // ] = await Promise.all([
+  //   userProgressData,
+  //   unitsData,
+  //   courseProgressData,
+  //   lessonPercentageData,
+  //   userSubscriptionData,
+  //   learningPathsData,
+  // ]);
 
   // console.log(learningPaths);
 
-  if (!userProgress || !userProgress.activeCourse) {
-    redirect("/courses");
-  }
+  // if (!userProgress || !userProgress.activeCourse) {
+  //   redirect("/courses");
+  // }
 
-  if (!courseProgress) {
-    redirect("/courses");
-  }
+  // if (!courseProgress) {
+  //   redirect("/courses");
+  // }
 
-  const isPro = !!userSubscription?.isActive;
+  // const isPro = !!userSubscription?.isActive;
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
-      <StickyWrapper>
+      {/* <StickyWrapper>
         <UserProgress
           activeCourse={userProgress.activeCourse}
           hearts={userProgress.hearts}
@@ -66,10 +66,10 @@ const LearnPage = async () => {
         />
         {!isPro && <Promotions />}
         <Quests points={userProgress.points} />
-      </StickyWrapper>
+      </StickyWrapper> */}
 
       <FeedWrapper>
-        <Header title={userProgress.activeCourse.title} />
+        {/* <Header title={userProgress.activeCourse.title} /> */}
 
         <LearningPaths />
 
