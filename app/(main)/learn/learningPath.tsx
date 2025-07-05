@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React, { useState } from "react";
+import React, { startTransition, useState, useTransition } from "react";
 import {
   Star,
   Clock,
@@ -14,10 +14,13 @@ import {
 } from "lucide-react";
 import { Path, PathCardProps, PathId } from "./types";
 import path from "path";
+import { chooseLearningPath } from "@/actions/user-progress";
+import { toast } from "sonner";
 
 const paths: Path[] = [
   {
-    id: "classic",
+    id: 5,
+    learning_path_id: "classic",
     title: "Classic Path",
     subtitle: "Learn through structured lessons and challenges",
     difficulty: 2,
@@ -35,63 +38,66 @@ const paths: Path[] = [
     xpText: "Total earned: 1,240 XP",
     buttonText: "CONTINUE",
   },
-//   {
-//     id: "smart",
-//     title: "Smart Review",
-//     subtitle: "AI-powered review based on your memory strength",
-//     difficulty: 3,
-//     progress: 75,
-//     icon: "🧠",
-//     meta: [
-//       { icon: <Brain size={16} />, text: "23 words due" },
-//       { icon: <Zap size={16} />, text: "8 min session" },
-//       { icon: <Target size={16} />, text: "92% accuracy" },
-//     ],
-//     badges: [
-//       { text: "⭐ Recommended", variant: "recommended" },
-//       { text: "🧠 +180 XP ready", variant: "default" },
-//     ],
-//     xpText: "Total earned: 890 XP",
-//     buttonText: "START REVIEW",
-//   },
-//   {
-//     id: "culture",
-//     title: "Culture Dive",
-//     subtitle: "Learn through videos, news, and real-world content",
-//     difficulty: 2,
-//     progress: 50,
-//     icon: "🌍",
-//     meta: [
-//       { icon: "🎥", text: "5 new videos" },
-//       { icon: "📰", text: "Daily news" },
-//       { icon: <Globe size={16} />, text: "Level: Intermediate" },
-//     ],
-//     badges: [
-//       { text: "✨ New content", variant: "new" },
-//       { text: "🏆 Weekly challenge", variant: "default" },
-//     ],
-//     xpText: "Total earned: 630 XP",
-//     buttonText: "EXPLORE",
-//   },
-//   {
-//     id: "focused",
-//     title: "Focused Learning",
-//     subtitle: "Specialized content for professionals and travelers",
-//     difficulty: 3,
-//     progress: 0,
-//     icon: "🎯",
-//     meta: [
-//       { icon: <Briefcase size={16} />, text: "Business focus" },
-//       { icon: <Plane size={16} />, text: "Travel ready" },
-//       { icon: <Target size={16} />, text: "Custom goals" },
-//     ],
-//     badges: [
-//       { text: "🎯 Personalized", variant: "default" },
-//       { text: "📊 Track progress", variant: "default" },
-//     ],
-//     xpText: "Ready to start: 0 XP",
-//     buttonText: "CUSTOMIZE",
-//   },
+  {
+    id: 6,
+    learning_path_id: "smart",
+    title: "Smart Review",
+    subtitle: "AI-powered review based on your memory strength",
+    difficulty: 3,
+    progress: 75,
+    icon: "🧠",
+    meta: [
+      { icon: <Brain size={16} />, text: "23 words due" },
+      { icon: <Zap size={16} />, text: "8 min session" },
+      { icon: <Target size={16} />, text: "92% accuracy" },
+    ],
+    badges: [
+      { text: "⭐ Recommended", variant: "recommended" },
+      { text: "🧠 +180 XP ready", variant: "default" },
+    ],
+    xpText: "Total earned: 890 XP",
+    buttonText: "START REVIEW",
+  },
+  {
+    id: 7,
+    learning_path_id: "culture",
+    title: "Culture Dive",
+    subtitle: "Learn through videos, news, and real-world content",
+    difficulty: 2,
+    progress: 50,
+    icon: "🌍",
+    meta: [
+      { icon: "🎥", text: "5 new videos" },
+      { icon: "📰", text: "Daily news" },
+      { icon: <Globe size={16} />, text: "Level: Intermediate" },
+    ],
+    badges: [
+      { text: "✨ New content", variant: "new" },
+      { text: "🏆 Weekly challenge", variant: "default" },
+    ],
+    xpText: "Total earned: 630 XP",
+    buttonText: "EXPLORE",
+  },
+  {
+    id: 8,
+    learning_path_id: "focused",
+    title: "Focused Learning",
+    subtitle: "Specialized content for professionals and travelers",
+    difficulty: 3,
+    progress: 0,
+    icon: "🎯",
+    meta: [
+      { icon: <Briefcase size={16} />, text: "Business focus" },
+      { icon: <Plane size={16} />, text: "Travel ready" },
+      { icon: <Target size={16} />, text: "Custom goals" },
+    ],
+    badges: [
+      { text: "🎯 Personalized", variant: "default" },
+      { text: "📊 Track progress", variant: "default" },
+    ],
+    xpText: "Ready to start: 0 XP",
+    buttonText: "CUSTOMIZE",
+  },
 ];
 
 const ProgressRing = ({ progress, size = 70 }) => {
@@ -265,7 +271,8 @@ const PathCard = ({
   );
 };
 
-const LearningPaths = () => {
+const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) => {
+  const [pending, startTransition] = useTransition();
   const [achievement, setAchievement] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
@@ -275,20 +282,32 @@ const LearningPaths = () => {
     { number: "3", label: "Paths Active" },
   ];
 
-  const handlePathSelect = (pathId: string) => {
-    // Add visual feedback
-    const allCards = document.querySelectorAll("[data-path-card]");
-    allCards.forEach((card) => {
-      card.classList.add("scale-95");
-      setTimeout(() => {
-        card.classList.remove("scale-95");
-      }, 150);
-    });
+  const handlePathSelect = (pathId: number) => {
+    console.log(pathId);
 
-    // Show achievement for smart path
-    if (pathId === "smart") {
-      setAchievement("🎯 Perfect Review Streak!");
+    if (pathId === learningPathProgress?.activeLearningPathId) {
+      console.log("Already active");
+
+      // return router.push("/learn"); // Navigates to the "/learn" route if the clicked course is already active
     }
+
+
+    startTransition(() => {
+      chooseLearningPath(pathId).catch((err) => toast.error("Something went wrong"));
+    });
+    // // Add visual feedback
+    // const allCards = document.querySelectorAll("[data-path-card]");
+    // allCards.forEach((card) => {
+    //   card.classList.add("scale-95");
+    //   setTimeout(() => {
+    //     card.classList.remove("scale-95");
+    //   }, 150);
+    // });
+
+    // // Show achievement for smart path
+    // if (pathId === "smart") {
+    //   setAchievement("🎯 Perfect Review Streak!");
+    // }
   };
 
   return (
@@ -305,7 +324,7 @@ const LearningPaths = () => {
         </div>
 
         {/* Stats Bar */}
-        {/* <div className="flex justify-center gap-8 mb-10 p-5 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+        <div className="flex justify-center gap-8 mb-10 p-5 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-3xl font-bold text-cyan-400">
@@ -314,7 +333,7 @@ const LearningPaths = () => {
               <div className="text-sm text-gray-400 mt-1">{stat.label}</div>
             </div>
           ))}
-        </div> */}
+        </div>
 
         {/* Learning Paths */}
         <div className="grid gap-6">
@@ -325,9 +344,9 @@ const LearningPaths = () => {
                 <PathCard
                   path={path}
                   onSelect={handlePathSelect}
-                  isHovered={hoveredCard === path.id}
-                  onHover={() => setHoveredCard(path.id)}
-                  onLeave={() => setHoveredCard(null)}
+                  // isHovered={hoveredCard === path.id}
+                  // onHover={() => setHoveredCard(path.id)}
+                  // onLeave={() => setHoveredCard(null)}
                 />
               </div>
             );

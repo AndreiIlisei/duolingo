@@ -44,3 +44,32 @@ export const getLearningPaths = cache(async () => {
 
   return data;
 });
+
+export const getLearningPathProgress = cache(async () => {
+  const { userId } = await auth();
+  const progress = await getUserProgress();
+
+  if (!userId || !progress?.activeLearningPathId) return null;
+
+  // total sections in that path
+  // const total = await db.query.sections.count({
+  //   where: eq(sections.learningPathId, progress.activeLearningPathId),
+  // });
+
+  // sections this user completed
+  // const done = await db.query.sectionProgress.count({
+  //   where: and(
+  //     eq(sectionProgress.userId, userId),
+  //     eq(sectionProgress.completed, true),
+  //     eq(sectionProgress.sectionId, sections.id),
+  //     eq(sections.learningPathId, progress.activeLearningPathId)
+  //   ),
+  //   join: sections, // join so we can filter on path
+  // });
+
+  // return {
+  //   completed: done,
+  //   total,
+  //   percent: total ? Math.round((done / total) * 100) : 0,
+  // };
+});

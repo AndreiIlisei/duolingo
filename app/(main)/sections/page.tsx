@@ -18,7 +18,7 @@ import { Quests } from "@/components/quests";
 import LearningPaths from "./learningPath";
 
 
-const LearnPage = async () => {
+const SectionsPage = async () => {
   const userProgressData = getUserProgress();
   const courseProgressData = getCourseProgress();
   const learningPathProgressData = getLearningPathProgress();
@@ -114,4 +114,4 @@ const LearnPage = async () => {
   );
 };
 
-export default LearnPage;
+export default SectionsPage;

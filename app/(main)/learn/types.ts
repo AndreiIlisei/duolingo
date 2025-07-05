@@ -2,7 +2,8 @@
 export type PathId = "classic" | "smart" | "culture" | "focused";
 
 export type Path = {
-  id: PathId;
+  id: number;
+  learning_path_id: PathId;
   title: string;
   subtitle: string;
   difficulty: number;
@@ -18,7 +19,7 @@ export type Path = {
 
 export type PathCardProps = {
   path: Path;
-  onSelect: (pathId: PathId) => void;
+  onSelect: (pathId: number) => void;
   isHovered: boolean;
   onHover: () => void;
   onLeave: () => void;

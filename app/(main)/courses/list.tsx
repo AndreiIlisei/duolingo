@@ -34,6 +34,8 @@ export const List = ({ courses, activeCourseId }: Props) => {
       upsertUserProgress(id).catch(() => toast.error("Something went wrong"));
     });
   };
+
+  
   return (
     <div className="pt-6 grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4">
       {courses.map((course) => (

@@ -42,7 +42,8 @@ export const getCourseById = cache(async (courseId: number) => {
 export const getCourseProgress = cache(async () => {
   const { userId }   = await auth();
   const progress     = await getUserProgress();
-  if (!userId || !progress?.activeLearningPathId) return null;
+  
+  if (!userId || !progress?.activeCourseId) return null;
 
   // if sections/units not seeded, just return a stub:
   return { activeLesson: null, activeLessonId: null };
