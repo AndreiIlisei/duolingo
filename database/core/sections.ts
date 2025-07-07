@@ -16,14 +16,14 @@ export const sections = pgTable("sections", {
     .notNull(),
 });
 
-// export const sectionsRelations = relations(sections, ({ one, many }) => ({
-//   course: one(courses, {
-//     fields: [sections.courseId],
-//     references: [courses.id],
-//   }),
-//   learningPath: one(learningPaths, {
-//     fields: [sections.learningPathId],
-//     references: [learningPaths.id],
-//   }),
-//   units: many(units),
-// }));
+export const sectionsRelations = relations(sections, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [sections.courseId],
+    references: [courses.id],
+  }),
+  learningPath: one(learningPaths, {
+    fields: [sections.learningPathId],
+    references: [learningPaths.id],
+  }),
+  // units: many(units),
+}));

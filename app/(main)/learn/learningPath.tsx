@@ -190,26 +190,28 @@ const PathCard = ({
 }: PathCardProps) => {
   const backgroundPatterns: Record<PathId, string> = {
     classic: "bg-gradient-to-br from-green-400 to-green-600",
-    smart: "bg-gradient-to-br from-blue-500 to-blue-700",
-    culture: "bg-gradient-to-br from-purple-500 to-purple-700",
-    focused: "bg-gradient-to-br from-orange-500 to-orange-600",
+    srs: "bg-gradient-to-br from-blue-500 to-blue-700",
+    immersion: "bg-gradient-to-br from-purple-500 to-purple-700",
+    targeted: "bg-gradient-to-br from-orange-500 to-orange-600",
   } as const;
+
+  // console.log(path)
 
   const patternOverlays: Record<PathId, string> = {
     classic:
       "bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.1)_10px,rgba(255,255,255,0.1)_20px)]",
-    smart:
+    srs:
       "bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1)_2px,transparent_2px),radial-gradient(circle_at_80%_50%,rgba(255,255,255,0.1)_2px,transparent_2px)]",
-    culture:
+    immersion:
       "bg-[repeating-conic-gradient(from_0deg_at_50%_50%,transparent_0deg,rgba(255,255,255,0.1)_45deg,transparent_90deg)]",
-    focused:
+    targeted:
       "bg-[repeating-linear-gradient(0deg,transparent,transparent_15px,rgba(255,255,255,0.1)_15px,rgba(255,255,255,0.1)_30px),repeating-linear-gradient(90deg,transparent,transparent_15px,rgba(255,255,255,0.1)_15px,rgba(255,255,255,0.1)_30px)]",
   } as const;
 
   return (
     <div
       className={`relative p-8 rounded-3xl cursor-pointer transition-all duration-300 border border-white/10 overflow-hidden group
-        ${backgroundPatterns[path.id]} 
+        ${backgroundPatterns[path.type]} 
         ${
           isHovered
             ? "transform -translate-y-2 scale-105 shadow-2xl"
@@ -222,7 +224,7 @@ const PathCard = ({
       {/* Pattern Overlay */}
       <div
         className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 
-            ${patternOverlays[path.id]}`}
+            ${patternOverlays[path.type]}`}
         style={{ backgroundSize: "30px 30px" }}
       />
 
@@ -231,50 +233,60 @@ const PathCard = ({
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h3 className="text-2xl font-bold text-white">{path.title}</h3>
-              <DifficultyStars level={path.difficulty} />
+              {/* <DifficultyStars level={path.difficulty} /> */}
             </div>
-            <p className="text-white/90 mb-4">{path.subtitle}</p>
+            {/* <p className="text-white/90 mb-4">{path.subtitle}</p> */}
+            <p className="text-white/90 mb-4">{path.description}</p>
 
-            <div className="flex flex-wrap gap-5 mb-4 text-sm text-white/90">
+            {/* <div className="flex flex-wrap gap-5 mb-4 text-sm text-white/90">
               {path.meta.map((item, index) => (
                 <div key={index} className="flex items-center gap-1.5">
                   {item.icon}
                   <span>{item.text}</span>
                 </div>
               ))}
-            </div>
+            </div> */}
 
-            <div className="flex flex-wrap gap-2 mb-4">
+            {/* <div className="flex flex-wrap gap-2 mb-4">
               {path.badges.map((badge, index) => (
                 <Badge key={index} variant={badge.variant}>
                   {badge.text}
                 </Badge>
               ))}
-            </div>
+            </div> */}
 
-            <div className="text-sm text-white/80">{path.xpText}</div>
+            {/* <div className="text-sm text-white/80">{path.xpText}</div> */}
           </div>
 
-          <div className="relative">
+          {/* <div className="relative">
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl relative">
               <ProgressRing progress={path.progress} />
               {path.icon}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <button className="w-full bg-white/20 backdrop-blur-sm border-none text-white py-3 px-6 rounded-xl font-semibold transition-all duration-300 hover:bg-white/30 hover:-translate-y-0.5">
-          {path.buttonText}
+          {/* {path.buttonText} */}
+          Choose this
         </button>
       </div>
     </div>
   );
 };
 
-const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) => {
+const LearningPaths = ({
+  learningPathProgress,
+  learningPaths,
+}: {
+  learningPathProgress: any;
+  learningPaths: any;
+}) => {
   const [pending, startTransition] = useTransition();
   const [achievement, setAchievement] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+
+  // console.log(learningPathProgress);
 
   const stats = [
     { number: "2760", label: "Total XP" },
@@ -282,8 +294,11 @@ const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) 
     { number: "3", label: "Paths Active" },
   ];
 
+  console.log(learningPathProgress?.activeLearningPathId);
+  
   const handlePathSelect = (pathId: number) => {
-    console.log(pathId);
+    // console.log(pathId);
+    // console.log(learningPathProgress?.activeLearningPathId);
 
     if (pathId === learningPathProgress?.activeLearningPathId) {
       console.log("Already active");
@@ -291,10 +306,12 @@ const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) 
       // return router.push("/learn"); // Navigates to the "/learn" route if the clicked course is already active
     }
 
-
     startTransition(() => {
-      chooseLearningPath(pathId).catch((err) => toast.error("Something went wrong"));
+      chooseLearningPath(pathId).catch((err) =>
+        toast.error("Something went wrong")
+      );
     });
+
     // // Add visual feedback
     // const allCards = document.querySelectorAll("[data-path-card]");
     // allCards.forEach((card) => {
@@ -324,7 +341,7 @@ const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) 
         </div>
 
         {/* Stats Bar */}
-        <div className="flex justify-center gap-8 mb-10 p-5 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+        {/* <div className="flex justify-center gap-8 mb-10 p-5 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-3xl font-bold text-cyan-400">
@@ -333,24 +350,38 @@ const LearningPaths = ({ learningPathProgress }: { learningPathProgress: any }) 
               <div className="text-sm text-gray-400 mt-1">{stat.label}</div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Learning Paths */}
         <div className="grid gap-6">
-          {paths.map((path) => {
-            console.log(path);
+          {learningPaths.map((path) => {
+            // console.log(path);
             return (
               <div key={path.id} data-path-card>
                 <PathCard
                   path={path}
                   onSelect={handlePathSelect}
-                  // isHovered={hoveredCard === path.id}
-                  // onHover={() => setHoveredCard(path.id)}
-                  // onLeave={() => setHoveredCard(null)}
+                  isHovered={hoveredCard === path.id}
+                  onHover={() => setHoveredCard(path.id)}
+                  onLeave={() => setHoveredCard(null)}
                 />
               </div>
             );
           })}
+          {/* {paths.map((path) => {
+            // console.log(path);
+            return (
+              <div key={path.id} data-path-card>
+                <PathCard
+                  path={path}
+                  onSelect={handlePathSelect}
+                  isHovered={hoveredCard === path.id}
+                  onHover={() => setHoveredCard(path.id)}
+                  onLeave={() => setHoveredCard(null)}
+                />
+              </div>
+            );
+          })} */}
         </div>
 
         {/* Achievement Popup */}

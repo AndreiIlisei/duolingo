@@ -16,6 +16,7 @@ import {
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 // Change this into separate userProgress for Course
 export const upsertUserProgress = async (
@@ -32,17 +33,7 @@ export const upsertUserProgress = async (
     const course = await getCourseById(courseId);
     if (!course) throw new Error(`Course ${courseId} not found`);
 
-    // 3 ▸ Pick default path for that course
-    // const path = await db.query.learningPaths.findFirst({
-    //   where: and(
-    //     eq(learningPaths.courseId, courseId),
-    //     eq(learningPaths.type, "classic") // default path
-    //   ),
-    // });
-
-    // if (!path) throw new Error("No learning path for this course");
-
-    // 4 ▸ Upsert with one DB call
+    // 3 ▸ Upsert with one DB call
     await db
       .insert(userProgress)
       .values({
@@ -64,31 +55,32 @@ export const upsertUserProgress = async (
         },
       });
 
-    // 5 ▸ Revalidate pages & navigate
-    revalidatePath("/courses");
-    revalidatePath("/learn");
-
     console.log("upsertUserProgress success");
 
-    return true; // caller can redirect or toast on success
+    // return true; // caller can redirect or toast on success
   } catch (err) {
     console.error("upsertUserProgress error:", err);
     return false; // caller can show error toast
   }
+
+  // 4 ▸ Revalidate pages & navigate
+  revalidatePath("/courses");
+  revalidatePath("/learn");
+  redirect("/learn");
 };
 
 export const chooseLearningPath = async (pathId: number) => {
+  console.log("RUNS")
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  console.log("PRESSED")
-  
   await db
     .update(userProgress)
     .set({ activeLearningPathId: pathId })
     .where(eq(userProgress.userId, userId));
 
   revalidatePath("/learn");
+  redirect("/sections");
 };
 
 export const reduceHearts = async (challengeId: number) => {

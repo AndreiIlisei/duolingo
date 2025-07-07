@@ -50,6 +50,13 @@
       "when": 1751320253560,
       "tag": "0006_peaceful_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1751888798412,
+      "tag": "0007_early_menace",
+      "breakpoints": true
     }
   ]
 }

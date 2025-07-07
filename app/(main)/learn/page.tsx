@@ -25,10 +25,8 @@ const LearnPage = async () => {
   // const lessonPercentageData = getLessonPercentage();
   // const unitsData = getUnits();
   // const userSubscriptionData = getUserSubscription();
-  // const learningPathsData = getLearningPaths();
+  const learningPathsData = getLearningPaths();
   
-  // console.log(learningPathsData);
-
   const [
     userProgress,
     courseProgress,
@@ -36,7 +34,7 @@ const LearnPage = async () => {
     // units,
     // lessonPercentage,
     // userSubscription,
-    // learningPaths,
+    learningPaths,
   ] = await Promise.all([
     userProgressData,
     courseProgressData,
@@ -44,10 +42,11 @@ const LearnPage = async () => {
     // unitsData,
     // lessonPercentageData,
     // userSubscriptionData,
-    // learningPathsData,
+    learningPathsData,
   ]);
 
   // console.log(learningPaths);
+  // console.log(learningPathProgress);
 
   if (!userProgress || !userProgress.activeCourse) {
     redirect("/courses");
@@ -75,7 +74,10 @@ const LearnPage = async () => {
       <FeedWrapper>
         {/* <Header title={userProgress.activeCourse.title} /> */}
 
-        <LearningPaths learningPathProgress={learningPathProgress}/>
+        <LearningPaths 
+        learningPathProgress={learningPathProgress}
+        learningPaths={learningPaths}
+        />
 
         {/* {learningPaths.map((learningPath) => {
           return (
