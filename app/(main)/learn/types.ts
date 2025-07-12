@@ -1,20 +1,24 @@
 // Define the valid path IDs as a type
-export type PathId = "classic" | "smart" | "culture" | "focused";
+export type PathId = "classic" | "srs" | "immersion" | "targeted";
 
 export type Path = {
   id: number;
-  learning_path_id: PathId;
+  courseId: number | null;
+  order: number | null;
   title: string;
-  subtitle: string;
-  difficulty: number;
-  progress: number;
-  icon: string;
-  meta:
-    | { icon: string; text: string }[]
-    | { icon: React.ReactNode; text: string }[];
-  badges: { text: string; variant: string }[];
-  xpText: string;
-  buttonText: string;
+  description: string;
+  learning_path_type: PathId;
+  // type: PathId;
+  // subtitle: string;
+  // difficulty: number;
+  // progress: number;
+  // icon: string;
+  // meta:
+  //   | { icon: string; text: string }[]
+  //   | { icon: React.ReactNode; text: string }[];
+  // badges: { text: string; variant: string }[];
+  // xpText: string;
+  // buttonText: string;
 };
 
 export type PathCardProps = {

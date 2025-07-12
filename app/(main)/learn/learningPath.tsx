@@ -1,185 +1,91 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { startTransition, useState, useTransition } from "react";
-import {
-  Star,
-  Clock,
-  BookOpen,
-  Target,
-  Brain,
-  Globe,
-  Briefcase,
-  Plane,
-  Zap,
-} from "lucide-react";
 import { Path, PathCardProps, PathId } from "./types";
 import path from "path";
 import { chooseLearningPath } from "@/actions/user-progress";
 import { toast } from "sonner";
 
-const paths: Path[] = [
-  {
-    id: 5,
-    learning_path_id: "classic",
-    title: "Classic Path",
-    subtitle: "Learn through structured lessons and challenges",
-    difficulty: 2,
-    progress: 85,
-    icon: "📚",
-    meta: [
-      { icon: <Clock size={16} />, text: "~15 min/day" },
-      { icon: <BookOpen size={16} />, text: "42 lessons" },
-      { icon: <Target size={16} />, text: "85% complete" },
-    ],
-    badges: [
-      { text: "🔥 12 day streak", variant: "streak" },
-      { text: "📈 +250 XP today", variant: "default" },
-    ],
-    xpText: "Total earned: 1,240 XP",
-    buttonText: "CONTINUE",
-  },
-  {
-    id: 6,
-    learning_path_id: "smart",
-    title: "Smart Review",
-    subtitle: "AI-powered review based on your memory strength",
-    difficulty: 3,
-    progress: 75,
-    icon: "🧠",
-    meta: [
-      { icon: <Brain size={16} />, text: "23 words due" },
-      { icon: <Zap size={16} />, text: "8 min session" },
-      { icon: <Target size={16} />, text: "92% accuracy" },
-    ],
-    badges: [
-      { text: "⭐ Recommended", variant: "recommended" },
-      { text: "🧠 +180 XP ready", variant: "default" },
-    ],
-    xpText: "Total earned: 890 XP",
-    buttonText: "START REVIEW",
-  },
-  {
-    id: 7,
-    learning_path_id: "culture",
-    title: "Culture Dive",
-    subtitle: "Learn through videos, news, and real-world content",
-    difficulty: 2,
-    progress: 50,
-    icon: "🌍",
-    meta: [
-      { icon: "🎥", text: "5 new videos" },
-      { icon: "📰", text: "Daily news" },
-      { icon: <Globe size={16} />, text: "Level: Intermediate" },
-    ],
-    badges: [
-      { text: "✨ New content", variant: "new" },
-      { text: "🏆 Weekly challenge", variant: "default" },
-    ],
-    xpText: "Total earned: 630 XP",
-    buttonText: "EXPLORE",
-  },
-  {
-    id: 8,
-    learning_path_id: "focused",
-    title: "Focused Learning",
-    subtitle: "Specialized content for professionals and travelers",
-    difficulty: 3,
-    progress: 0,
-    icon: "🎯",
-    meta: [
-      { icon: <Briefcase size={16} />, text: "Business focus" },
-      { icon: <Plane size={16} />, text: "Travel ready" },
-      { icon: <Target size={16} />, text: "Custom goals" },
-    ],
-    badges: [
-      { text: "🎯 Personalized", variant: "default" },
-      { text: "📊 Track progress", variant: "default" },
-    ],
-    xpText: "Ready to start: 0 XP",
-    buttonText: "CUSTOMIZE",
-  },
-];
+// const ProgressRing = ({ progress, size = 70 }) => {
+//   const center = size / 2;
+//   const radius = center - 5;
+//   const circumference = 2 * Math.PI * radius;
+//   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
-const ProgressRing = ({ progress, size = 70 }) => {
-  const center = size / 2;
-  const radius = center - 5;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
+//   return (
+//     <svg className="absolute -top-1 -left-1" width={size} height={size}>
+//       <circle
+//         cx={center}
+//         cy={center}
+//         r={radius}
+//         fill="none"
+//         stroke="rgba(255, 255, 255, 0.2)"
+//         strokeWidth="3"
+//       />
+//       <circle
+//         cx={center}
+//         cy={center}
+//         r={radius}
+//         fill="none"
+//         stroke="rgba(255, 255, 255, 0.8)"
+//         strokeWidth="3"
+//         strokeLinecap="round"
+//         strokeDasharray={circumference}
+//         strokeDashoffset={strokeDashoffset}
+//         transform={`rotate(-90 ${center} ${center})`}
+//         className="transition-all duration-500"
+//       />
+//     </svg>
+//   );
+// };
 
-  return (
-    <svg className="absolute -top-1 -left-1" width={size} height={size}>
-      <circle
-        cx={center}
-        cy={center}
-        r={radius}
-        fill="none"
-        stroke="rgba(255, 255, 255, 0.2)"
-        strokeWidth="3"
-      />
-      <circle
-        cx={center}
-        cy={center}
-        r={radius}
-        fill="none"
-        stroke="rgba(255, 255, 255, 0.8)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={strokeDashoffset}
-        transform={`rotate(-90 ${center} ${center})`}
-        className="transition-all duration-500"
-      />
-    </svg>
-  );
-};
+// const DifficultyStars = ({ level }) => {
+//   return (
+//     <div className="flex gap-0.5">
+//       {[1, 2, 3].map((star) => (
+//         <Star
+//           key={star}
+//           size={12}
+//           className={`${
+//             star <= level
+//               ? "text-yellow-400 fill-yellow-400"
+//               : "text-yellow-400/30"
+//           }`}
+//         />
+//       ))}
+//     </div>
+//   );
+// };
 
-const DifficultyStars = ({ level }) => {
-  return (
-    <div className="flex gap-0.5">
-      {[1, 2, 3].map((star) => (
-        <Star
-          key={star}
-          size={12}
-          className={`${
-            star <= level
-              ? "text-yellow-400 fill-yellow-400"
-              : "text-yellow-400/30"
-          }`}
-        />
-      ))}
-    </div>
-  );
-};
+// const Badge = ({ children, variant = "default", className = "" }) => {
+//   const variants = {
+//     default: "bg-white/20 backdrop-blur-sm",
+//     new: "bg-gradient-to-r from-red-400 to-red-500 animate-pulse",
+//     recommended: "bg-gradient-to-r from-yellow-400 to-yellow-500 text-black",
+//     streak: "bg-gradient-to-r from-red-500 to-red-600",
+//   };
 
-const Badge = ({ children, variant = "default", className = "" }) => {
-  const variants = {
-    default: "bg-white/20 backdrop-blur-sm",
-    new: "bg-gradient-to-r from-red-400 to-red-500 animate-pulse",
-    recommended: "bg-gradient-to-r from-yellow-400 to-yellow-500 text-black",
-    streak: "bg-gradient-to-r from-red-500 to-red-600",
-  };
+//   return (
+//     <span
+//       className={`px-3 py-1.5 rounded-full text-xs font-semibold ${variants[variant]} ${className}`}
+//     >
+//       {children}
+//     </span>
+//   );
+// };
 
-  return (
-    <span
-      className={`px-3 py-1.5 rounded-full text-xs font-semibold ${variants[variant]} ${className}`}
-    >
-      {children}
-    </span>
-  );
-};
+// const AchievementPopup = ({ message, onClose }) => {
+//   React.useEffect(() => {
+//     const timer = setTimeout(onClose, 3000);
+//     return () => clearTimeout(timer);
+//   }, [onClose]);
 
-const AchievementPopup = ({ message, onClose }) => {
-  React.useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
-
-  return (
-    <div className="fixed top-5 right-5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-5 py-3 rounded-xl font-semibold shadow-lg z-50 animate-in slide-in-from-right duration-500">
-      {message}
-    </div>
-  );
-};
+//   return (
+//     <div className="fixed top-5 right-5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-5 py-3 rounded-xl font-semibold shadow-lg z-50 animate-in slide-in-from-right duration-500">
+//       {message}
+//     </div>
+//   );
+// };
 
 const PathCard = ({
   path,
@@ -195,13 +101,10 @@ const PathCard = ({
     targeted: "bg-gradient-to-br from-orange-500 to-orange-600",
   } as const;
 
-  // console.log(path)
-
   const patternOverlays: Record<PathId, string> = {
     classic:
       "bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(255,255,255,0.1)_10px,rgba(255,255,255,0.1)_20px)]",
-    srs:
-      "bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1)_2px,transparent_2px),radial-gradient(circle_at_80%_50%,rgba(255,255,255,0.1)_2px,transparent_2px)]",
+    srs: "bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1)_2px,transparent_2px),radial-gradient(circle_at_80%_50%,rgba(255,255,255,0.1)_2px,transparent_2px)]",
     immersion:
       "bg-[repeating-conic-gradient(from_0deg_at_50%_50%,transparent_0deg,rgba(255,255,255,0.1)_45deg,transparent_90deg)]",
     targeted:
@@ -211,12 +114,13 @@ const PathCard = ({
   return (
     <div
       className={`relative p-8 rounded-3xl cursor-pointer transition-all duration-300 border border-white/10 overflow-hidden group
-        ${backgroundPatterns[path.type]} 
+        ${backgroundPatterns[path.learning_path_type]} 
         ${
           isHovered
             ? "transform -translate-y-2 scale-105 shadow-2xl"
             : "hover:-translate-y-2 hover:scale-105 hover:shadow-2xl"
-        }`}
+        }
+        `}
       onClick={() => onSelect(path.id)}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
@@ -224,7 +128,7 @@ const PathCard = ({
       {/* Pattern Overlay */}
       <div
         className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300 
-            ${patternOverlays[path.type]}`}
+            ${patternOverlays[path.learning_path_type]}`}
         style={{ backgroundSize: "30px 30px" }}
       />
 
@@ -278,15 +182,15 @@ const PathCard = ({
 const LearningPaths = ({
   learningPathProgress,
   learningPaths,
+  onSelect,
 }: {
-  learningPathProgress: any;
-  learningPaths: any;
+  learningPathProgress: number | null;
+  learningPaths: Path[];
+  onSelect: (pathId: number) => void;
 }) => {
   const [pending, startTransition] = useTransition();
   const [achievement, setAchievement] = useState<string | null>(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-
-  // console.log(learningPathProgress);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   const stats = [
     { number: "2760", label: "Total XP" },
@@ -294,38 +198,48 @@ const LearningPaths = ({
     { number: "3", label: "Paths Active" },
   ];
 
-  console.log(learningPathProgress?.activeLearningPathId);
-  
   const handlePathSelect = (pathId: number) => {
-    // console.log(pathId);
-    // console.log(learningPathProgress?.activeLearningPathId);
-
-    if (pathId === learningPathProgress?.activeLearningPathId) {
-      console.log("Already active");
-
-      // return router.push("/learn"); // Navigates to the "/learn" route if the clicked course is already active
-    }
-
-    startTransition(() => {
-      chooseLearningPath(pathId).catch((err) =>
-        toast.error("Something went wrong")
-      );
+    startTransition(async () => {
+      try {
+        await chooseLearningPath(pathId); // server call
+        /* local UI state reset */
+        onSelect(pathId);
+      } catch {
+        toast.error("Something went wrong");
+      }
     });
-
-    // // Add visual feedback
-    // const allCards = document.querySelectorAll("[data-path-card]");
-    // allCards.forEach((card) => {
-    //   card.classList.add("scale-95");
-    //   setTimeout(() => {
-    //     card.classList.remove("scale-95");
-    //   }, 150);
-    // });
-
-    // // Show achievement for smart path
-    // if (pathId === "smart") {
-    //   setAchievement("🎯 Perfect Review Streak!");
-    // }
   };
+
+  // const handlePathSelect = (pathId: number) => {
+  //   // console.log(pathId);
+  //   // console.log(learningPathProgress?.activeLearningPathId);
+
+  //   // if (pathId === learningPathProgress) {
+  //   //   console.log("Already active");
+
+  //   //   // return router.push("/learn"); // Navigates to the "/learn" route if the clicked course is already active
+  //   // }
+
+  //   startTransition(() => {
+  //     chooseLearningPath(pathId, onSelect).catch((err) =>
+  //       toast.error("Something went wrong")
+  //     );
+  //   });
+
+  //   // // Add visual feedback
+  //   // const allCards = document.querySelectorAll("[data-path-card]");
+  //   // allCards.forEach((card) => {
+  //   //   card.classList.add("scale-95");
+  //   //   setTimeout(() => {
+  //   //     card.classList.remove("scale-95");
+  //   //   }, 150);
+  //   // });
+
+  //   // // Show achievement for smart path
+  //   // if (pathId === "smart") {
+  //   //   setAchievement("🎯 Perfect Review Streak!");
+  //   // }
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br  text-white p-10">
@@ -355,7 +269,6 @@ const LearningPaths = ({
         {/* Learning Paths */}
         <div className="grid gap-6">
           {learningPaths.map((path) => {
-            // console.log(path);
             return (
               <div key={path.id} data-path-card>
                 <PathCard
@@ -368,29 +281,15 @@ const LearningPaths = ({
               </div>
             );
           })}
-          {/* {paths.map((path) => {
-            // console.log(path);
-            return (
-              <div key={path.id} data-path-card>
-                <PathCard
-                  path={path}
-                  onSelect={handlePathSelect}
-                  isHovered={hoveredCard === path.id}
-                  onHover={() => setHoveredCard(path.id)}
-                  onLeave={() => setHoveredCard(null)}
-                />
-              </div>
-            );
-          })} */}
         </div>
 
         {/* Achievement Popup */}
-        {achievement && (
+        {/* {achievement && (
           <AchievementPopup
             message={achievement}
             onClose={() => setAchievement(null)}
           />
-        )}
+        )} */}
       </div>
     </div>
   );

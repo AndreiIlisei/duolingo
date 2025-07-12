@@ -70,7 +70,6 @@ export const upsertUserProgress = async (
 };
 
 export const chooseLearningPath = async (pathId: number) => {
-  console.log("RUNS")
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -80,7 +79,7 @@ export const chooseLearningPath = async (pathId: number) => {
     .where(eq(userProgress.userId, userId));
 
   revalidatePath("/learn");
-  redirect("/sections");
+  return { ok: true };
 };
 
 export const reduceHearts = async (challengeId: number) => {

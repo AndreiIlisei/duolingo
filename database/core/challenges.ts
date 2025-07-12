@@ -1,6 +1,7 @@
 import { pgEnum, pgTable, serial } from "drizzle-orm/pg-core";
 import { integer, text } from "drizzle-orm/pg-core";
-import { lessons } from "../schema";
+import { challengeOptions, challengeProgress, lessons } from "../schema";
+import { relations } from "drizzle-orm";
 
 export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
 
@@ -13,3 +14,12 @@ export const challenges = pgTable("challenges", {
   question: text("question").notNull(),
   order: integer("order").notNull(),
 });
+
+export const challengesRelations = relations(challenges, ({ one, many }) => ({
+  lesson: one(lessons, {
+    fields: [challenges.lessonId],
+    references: [lessons.id],
+  }),
+  challengeOptions: many(challengeOptions),
+  challengeProgress: many(challengeProgress),
+}));

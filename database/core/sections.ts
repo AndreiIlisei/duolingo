@@ -25,5 +25,5 @@ export const sectionsRelations = relations(sections, ({ one, many }) => ({
     fields: [sections.learningPathId],
     references: [learningPaths.id],
   }),
-  // units: many(units),
+  units: many(units),
 }));

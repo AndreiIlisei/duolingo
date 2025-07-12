@@ -2,8 +2,6 @@ import { pgTable, integer, text, serial } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { lessons, sections } from "../schema";
 
-// console.log(sections)
-
 export const units = pgTable("units", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
@@ -14,10 +12,10 @@ export const units = pgTable("units", {
     .notNull(),
 });
 
-// export const unitsRelations = relations(units, ({ one, many }) => ({
-//   section: one(sections, {
-//     fields: [units.sectionId],
-//     references: [sections.id],
-//   }),
-//   lessons: many(lessons),
-// }));
+export const unitsRelations = relations(units, ({ one, many }) => ({
+  section: one(sections, {
+    fields: [units.sectionId],
+    references: [sections.id],
+  }),
+  lessons: many(lessons),
+}));

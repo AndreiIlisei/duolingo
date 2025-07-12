@@ -169,7 +169,17 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
   );
 };
 
-export const SectionsView = () => {
+export const SectionsView = ({
+  sectionsData,
+  pathId,
+  currentSectionId,
+  onSelect,
+}: {
+  sectionsData: Section[];
+  pathId: number;
+  currentSectionId: number | null;
+  onSelect: (sectionId: number) => void;
+}) => {
   const [selectedSection, setSelectedSection] = useState(null);
 
   const sections = [
@@ -218,13 +228,14 @@ export const SectionsView = () => {
     },
   ];
 
-  const handleSectionSelect = (sectionId) => {
+  const handleSectionSelect = (sectionId: number) => {
     setSelectedSection(sectionId);
     // Handle navigation to section content
     console.log("Selected section:", sectionId);
+    onSelect(sectionId);
   };
 
-  const handleJumpToSection = (sectionId) => {
+  const handleJumpToSection = (sectionId: number) => {
     console.log("Jump to section:", sectionId);
     // Handle jump to section logic
   };
@@ -259,7 +270,7 @@ export const SectionsView = () => {
 
         {/* Sections List */}
         <div className="space-y-4">
-          {sections.map((section) => (
+          {sectionsData.map((section) => (
             <SectionCard
               key={section.id}
               section={section}

@@ -15,6 +15,8 @@ const main = async () => {
     // await db.delete(schema.learningPaths);
     // await db.delete(schema.courses);
     await db.delete(schema.sections);
+    await db.delete(schema.units);
+    await db.delete(schema.lessons);
 
     // Seed courses
     // await db.insert(schema.courses).values([
@@ -58,8 +60,10 @@ const main = async () => {
     // ]);
 
     const learningPaths = await db.query.learningPaths.findMany();
-    const classicPath = learningPaths.find((p) => p.type === "classic");
-    const srsPath = learningPaths.find((p) => p.type === "srs");
+    const classicPath = learningPaths.find(
+      (p) => p.learning_path_type === "classic"
+    );
+    const srsPath = learningPaths.find((p) => p.learning_path_type === "srs");
 
     if (!classicPath) throw new Error("Classic learning path not found");
     if (!srsPath) throw new Error("SRS learning path not found");
@@ -89,6 +93,85 @@ const main = async () => {
         order: 1,
         courseId: 1,
         learningPathId: srsPath.id,
+      },
+    ]);
+
+    await db.insert(schema.units).values([
+      {
+        id: 1,
+        sectionId: 1,
+        title: "Unit 1",
+        description: "Learn the basics of Spanish",
+        order: 1,
+      },
+    ]);
+
+    // Seed lessons
+    await db.insert(schema.lessons).values([
+      {
+        id: 1,
+        unitId: 1,
+        order: 1,
+        title: "Nouns",
+      },
+      {
+        id: 2,
+        unitId: 1,
+        order: 2,
+        title: "Verbs",
+      },
+    ]);
+
+    // Seed challenges
+    await db.insert(schema.challenges).values([
+      {
+        id: 1,
+        lessonId: 1,
+        type: "SELECT",
+        order: 1,
+        question: 'Which one of these is the "the man"?',
+      },
+      {
+        id: 2,
+        lessonId: 2,
+        type: "SELECT",
+        order: 1,
+        question: "Which one of these is the robot?",
+      },
+    ]);
+
+    // Seed challenge options
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 1,
+        imageSrc: "/man.png",
+        correct: true,
+        text: "el hombre",
+        audioSrc: "/elHombre.wav",
+      },
+      {
+        challengeId: 1,
+        imageSrc: "/female.png",
+        correct: false,
+        text: "la mujer",
+        audioSrc: "/laMujer.wav",
+      },
+    ]);
+
+    await db.insert(schema.challengeOptions).values([
+      {
+        challengeId: 2,
+        imageSrc: "/robot.png",
+        correct: true,
+        text: "el robot",
+        audioSrc: "/elRobot.wav",
+      },
+      {
+        challengeId: 2,
+        imageSrc: "/dog.png",
+        correct: false,
+        text: "el perro",
+        audioSrc: "/elPerro.wav",
       },
     ]);
 

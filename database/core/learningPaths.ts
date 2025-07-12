@@ -3,7 +3,7 @@ import { pgTable, serial, text, integer, pgEnum } from "drizzle-orm/pg-core";
 // import { courses, sections } from "../schema";
 import { courses } from "./courses";
 
-export const learningPathEnum = pgEnum("learning_path", [
+export const learningPathEnum = pgEnum("learning_path_type", [
   "classic",
   "srs",
   "immersion",
@@ -12,7 +12,7 @@ export const learningPathEnum = pgEnum("learning_path", [
 
 export const learningPaths = pgTable("learning_paths", {
   id: serial("id").primaryKey(),
-  type: learningPathEnum("learning_path").notNull(),
+  learning_path_type: learningPathEnum("learning_path_type").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   order: integer("order").default(0),

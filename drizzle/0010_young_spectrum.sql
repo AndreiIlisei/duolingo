@@ -1,0 +1,1 @@
+ALTER TABLE "learning_paths" RENAME COLUMN "learning_path" TO "learning_path_type";

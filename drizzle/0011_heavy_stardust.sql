@@ -1,0 +1,1 @@
+ALTER TYPE "public"."learning_path" RENAME TO "learning_path_type";

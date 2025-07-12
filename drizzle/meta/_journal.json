@@ -57,6 +57,48 @@
       "when": 1751888798412,
       "tag": "0007_early_menace",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1751896467064,
+      "tag": "0008_nosy_electro",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1751897861419,
+      "tag": "0009_dusty_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1751899970650,
+      "tag": "0010_young_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1751900022347,
+      "tag": "0011_heavy_stardust",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1751981040688,
+      "tag": "0012_worried_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1751981308826,
+      "tag": "0013_dapper_human_robot",
+      "breakpoints": true
     }
   ]
 }

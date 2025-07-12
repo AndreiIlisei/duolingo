@@ -12,7 +12,7 @@ const SectionPage = async () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b ">
-      <SectionsView sections={sectionsData} />
+      <SectionsView sectionsData={sectionsData} />
     </div>
   );
 };
