@@ -3,13 +3,19 @@
 import { FeedWrapper } from "@/components/feedWrapper";
 import { StickyWrapper } from "@/components/stickyWrapper";
 import { Header } from "./header";
-import { UserProgress } from "@/components/userProgress";
+import { UserProgress, UserProgressProps } from "@/components/userProgress";
 import { Promotions } from "@/components/promotions";
 import { Quests } from "@/components/quests";
 import LearningPaths from "./learningPath";
 import { useState } from "react";
 import { SectionsView } from "../sections/sectionPage";
 import { Unit } from "./unit";
+import {
+  CourseProgress,
+  LearningPathType,
+  SectionType,
+  UnitTypes,
+} from "./types";
 
 const LearnClient = ({
   userProgress,
@@ -17,36 +23,28 @@ const LearnClient = ({
   learningPaths,
   sections,
   units,
-  isPro,
   lessonPercentage,
 }: {
-  userProgress: any;
-  courseProgress: any;
-  learningPaths: any[];
-  sections: any[];
-  units: any[];
-  isPro: boolean;
+  userProgress: UserProgressProps;
+  courseProgress: CourseProgress;
+  learningPaths: LearningPathType[];
+  sections: SectionType[];
+  units: UnitTypes[];
   lessonPercentage: number;
 }) => {
   const [pathId, setPath] = useState<number | null>(null);
   const [sectionId, setSection] = useState<number | null>(null);
-  const [unitId, setUnit] = useState<number | null>(null);
 
   return (
     <div className="flex flex-row-reverse gap-[48px] px-6">
       <StickyWrapper>
-        <UserProgress
-          activeCourse={userProgress.activeCourse}
-          hearts={userProgress.hearts}
-          points={userProgress.points}
-          hasActiveSubscription={isPro}
-        />
-        {!isPro && <Promotions />}
+        <UserProgress {...userProgress} />
+        {!userProgress.hasActiveSubscription && <Promotions />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
 
       <FeedWrapper>
-        <Header title={userProgress.activeCourse.title} />
+        {/* <Header title={userProgress.activeCourse.title} /> */}
         {!pathId && (
           <LearningPaths
             learningPathProgress={userProgress?.activeLearningPathId}
@@ -54,7 +52,6 @@ const LearnClient = ({
             onSelect={(pid: number) => {
               setPath(pid);
               setSection(null);
-              setUnit(null);
             }}
           />
         )}
@@ -67,14 +64,17 @@ const LearnClient = ({
             currentSectionId={sectionId}
             onSelect={(sid) => {
               setSection(sid);
-              setUnit(null);
+            }}
+            onBack={() => {
+              setSection(null);
+              setPath(null);
             }}
           />
         )}
 
         {/* level 3: units (add later) */}
         {sectionId &&
-          units.map((unit) => {
+          units.map((unit: UnitTypes) => {
             return (
               <div key={unit.id} className="mb-10">
                 <Unit
@@ -85,6 +85,9 @@ const LearnClient = ({
                   lessons={unit.lessons}
                   activeLesson={courseProgress.activeLesson}
                   activeLessonPercentage={lessonPercentage}
+                  onBack={() => {
+                    setSection(null);
+                  }}
                 />
               </div>
             );

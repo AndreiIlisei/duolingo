@@ -1,36 +1,31 @@
-import { lessons, units } from "@/database/schema";
 import { UnitBanner } from "./unitBanner";
 import { LessonButton } from "./lessonButton";
-
-type Props = {
-  id: number;
-  order: number;
-  title: string;
-  description: string;
-  lessons: (typeof lessons.$inferSelect & {
-    completed: boolean;
-  })[];
-  activeLesson:
-    | (typeof lessons.$inferSelect & {
-        unit: typeof units.$inferSelect;
-      })
-    | undefined;
-  activeLessonPercentage: number;
-};
+import { UnitTypes } from "./types";
+import { ArrowLeft } from "lucide-react";
 
 export const Unit = ({
-  id,
-  order,
   title,
   description,
   lessons,
   activeLesson,
   activeLessonPercentage,
-}: Props) => {
-  console.log(lessons);
-  
+  onBack,
+}: UnitTypes & {
+  onBack: () => void;
+}) => {
   return (
     <>
+      <div className="sticky top-0 z-10 backdrop-blur-sm border-b mb-4">
+        <div className="max-w-2xl mx-auto px-6 py-4">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-black hover:text-gray-400 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Back</span>
+          </button>
+        </div>
+      </div>
       <UnitBanner title={title} description={description} />
       <div className="flex items-center flex-col relative">
         {lessons.map((lesson, index) => {

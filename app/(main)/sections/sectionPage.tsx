@@ -1,9 +1,7 @@
 "use client";
 import { ArrowLeft, Eye, Lock } from "lucide-react";
 import { useState } from "react";
-
-// Define the valid section IDs as a type
-type SectionId = "section1" | "section2" | "section3" | "section4";
+import { SectionType } from "../learn/types";
 
 const ProgressBar = ({ current, total, color = "bg-green-500" }) => {
   const percentage = (current / total) * 100;
@@ -23,7 +21,15 @@ const ProgressBar = ({ current, total, color = "bg-green-500" }) => {
   );
 };
 
-const SectionCard = ({ section, onSelect, onJumpTo }) => {
+const SectionCard = ({
+  section,
+  onSelect,
+  onJumpTo,
+}: {
+  section: SectionType;
+  onSelect: (sectionId: number) => void;
+  onJumpTo: (sectionId: number) => void;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const getStatusStyles = () => {
@@ -86,7 +92,7 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
         {/* Left Content */}
         <div className="flex-1 pr-4">
           {/* Header */}
-          <div className="flex items-center gap-2 mb-2">
+          {/* <div className="flex items-center gap-2 mb-2">
             <span className="text-cyan-400 text-sm font-semibold">
               {section.level} •
             </span>
@@ -100,7 +106,7 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
               <Eye size={14} />
               SEE DETAILS
             </button>
-          </div>
+          </div> */}
 
           {/* Section Title */}
           <h3 className="text-white text-xl font-bold mb-3">{section.title}</h3>
@@ -116,8 +122,8 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
           ) : (
             <div className="mb-4">
               <ProgressBar
-                current={section.completed}
-                total={section.total}
+                current={section.completed || 40}
+                total={section.total || 100}
                 color={styles.progressColor}
               />
             </div>
@@ -130,14 +136,15 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
               ${!isDisabled ? "hover:transform hover:-translate-y-0.5" : ""}
             `}
             disabled={isDisabled}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (section.status === "available") {
-                onJumpTo(section.id);
-              } else if (section.status === "completed") {
-                onSelect(section.id);
-              }
-            }}
+            onClick={() => !isDisabled && onSelect(section.id)}
+            // onClick={(e) => {
+            //   e.stopPropagation();
+            //   if (section.status === "available") {
+            //     onJumpTo(section.id);
+            //   } else if (section.status === "completed") {
+            //     onSelect(section.id);
+            //   }
+            // }}
           >
             {styles.buttonText}
           </button>
@@ -171,78 +178,23 @@ const SectionCard = ({ section, onSelect, onJumpTo }) => {
 
 export const SectionsView = ({
   sectionsData,
-  pathId,
-  currentSectionId,
   onSelect,
+  onBack,
 }: {
-  sectionsData: Section[];
-  pathId: number;
-  currentSectionId: number | null;
-  onSelect: (sectionId: number) => void;
+  sectionsData: SectionType[];
+  onSelect: (sectionId: number | null) => void;
+  onBack: () => void;
 }) => {
-  const [selectedSection, setSelectedSection] = useState(null);
-
-  const sections = [
-    {
-      id: "section1",
-      level: "A1",
-      title: "Section 1",
-      status: "completed",
-      completed: 8,
-      total: 8,
-      character: "🦉",
-      speechBubble: "¡Hola!",
-    },
-    {
-      id: "section2",
-      level: "A1",
-      title: "Section 2",
-      status: "available",
-      completed: 0,
-      total: 24,
-      units: 24,
-      character: "🦉",
-      speechBubble: "Quiero aprender español.",
-    },
-    {
-      id: "section3",
-      level: "A2",
-      title: "Section 3",
-      status: "locked",
-      completed: 0,
-      total: 18,
-      units: 18,
-      character: "🦉",
-      speechBubble: null,
-    },
-    {
-      id: "section4",
-      level: "A2",
-      title: "Section 4",
-      status: "locked",
-      completed: 0,
-      total: 22,
-      units: 22,
-      character: "🦉",
-      speechBubble: null,
-    },
-  ];
-
   const handleSectionSelect = (sectionId: number) => {
-    setSelectedSection(sectionId);
-    // Handle navigation to section content
-    console.log("Selected section:", sectionId);
     onSelect(sectionId);
   };
 
   const handleJumpToSection = (sectionId: number) => {
-    console.log("Jump to section:", sectionId);
-    // Handle jump to section logic
+    onSelect(sectionId);
   };
 
   const handleBack = () => {
-    // Handle back navigation
-    console.log("Going back...");
+    onBack();
   };
 
   return (
@@ -252,7 +204,7 @@ export const SectionsView = ({
         <div className="max-w-2xl mx-auto px-6 py-4">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-black hover:text-gray-400 transition-colors"
           >
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
@@ -262,13 +214,6 @@ export const SectionsView = ({
 
       {/* Content */}
       <div className="max-w-2xl mx-auto p-6">
-        {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Sections</h1>
-          <p className="text-gray-400">Continue your journey</p>
-        </div>
-
-        {/* Sections List */}
         <div className="space-y-4">
           {sectionsData.map((section) => (
             <SectionCard
@@ -279,9 +224,6 @@ export const SectionsView = ({
             />
           ))}
         </div>
-
-        {/* Bottom Spacing */}
-        <div className="h-20"></div>
       </div>
     </div>
   );

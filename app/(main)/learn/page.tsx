@@ -7,7 +7,6 @@ import {
   getUserSubscription,
   getLearningPaths,
   getUnits,
-  getLesson,
   getLessonPercentage,
 } from "@/queries/queries";
 
@@ -19,7 +18,6 @@ export default async function LearnPage() {
     learningPaths,
     sections,
     units,
-    lessons,
     lessonPercentage,
   ] = await Promise.all([
     getUserProgress(),
@@ -28,27 +26,27 @@ export default async function LearnPage() {
     getLearningPaths(),
     getSections(),
     getUnits(),
-    getLesson(),
     getLessonPercentage(),
   ]);
 
   if (!userProgress?.activeCourse || !courseProgress) {
     redirect("/courses");
   }
-
-  console.log(courseProgress);
   
-
   return (
     <LearnClient
-      userProgress={userProgress}
+      userProgress={{
+        activeCourse: userProgress.activeCourse,
+        hearts: userProgress.hearts,
+        points: userProgress.points,
+        hasActiveSubscription: !!userSubscription?.isActive,
+        activeLearningPathId: userProgress.activeLearningPathId,
+      }}
       courseProgress={courseProgress}
       learningPaths={learningPaths}
       sections={sections}
       units={units}
-      lessons={lessons}
       lessonPercentage={lessonPercentage}
-      isPro={!!userSubscription?.isActive}
     />
   );
 }
