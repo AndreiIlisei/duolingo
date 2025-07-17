@@ -1,9 +1,17 @@
 "use client";
-import { ArrowLeft, Eye, Lock } from "lucide-react";
+import { ArrowLeft, Lock } from "lucide-react";
 import { useState } from "react";
 import { SectionType } from "../learn/types";
 
-const ProgressBar = ({ current, total, color = "bg-green-500" }) => {
+const ProgressBar = ({
+  current,
+  total,
+  color = "bg-green-500",
+}: {
+  current: number;
+  total: number;
+  color: string;
+}) => {
   const percentage = (current / total) * 100;
 
   return (
@@ -24,16 +32,16 @@ const ProgressBar = ({ current, total, color = "bg-green-500" }) => {
 const SectionCard = ({
   section,
   onSelect,
-  onJumpTo,
+  status,
 }: {
   section: SectionType;
   onSelect: (sectionId: number) => void;
-  onJumpTo: (sectionId: number) => void;
+  status: "completed" | "available" | "locked" | "default";
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const getStatusStyles = () => {
-    switch (section.status) {
+    switch (status) {
       case "completed":
         return {
           bgColor: "bg-slate-700/60",
@@ -71,7 +79,7 @@ const SectionCard = ({
   };
 
   const styles = getStatusStyles();
-  const isDisabled = section.status === "locked";
+  const isDisabled = status === "locked";
 
   return (
     <div
@@ -109,21 +117,23 @@ const SectionCard = ({
           </div> */}
 
           {/* Section Title */}
-          <h3 className="text-white text-xl font-bold mb-3">{section.title}</h3>
+          <h3 className="text-white text-xl font-bold mb-3">
+            {section.title} - {section.description}
+          </h3>
 
           {/* Progress or Lock Status */}
-          {section.status === "locked" ? (
+          {status === "locked" ? (
             <div className="flex items-center gap-2 mb-4">
               <Lock size={16} className="text-gray-400" />
               <span className="text-gray-400 text-sm">
-                {section.units} UNITS
+                {section.total} UNITS
               </span>
             </div>
           ) : (
             <div className="mb-4">
               <ProgressBar
-                current={section.completed || 40}
-                total={section.total || 100}
+                current={section.done}
+                total={section.total}
                 color={styles.progressColor}
               />
             </div>
@@ -151,26 +161,23 @@ const SectionCard = ({
         </div>
 
         {/* Right Content - Character and Speech Bubble */}
-        <div className="relative">
-          {/* Speech Bubble */}
+        {/* <div className="relative">
           {section.speechBubble && (
             <div className="absolute -top-4 right-0 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg max-w-48 text-center">
               {section.speechBubble}
-              {/* Speech bubble tail */}
               <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-slate-800"></div>
             </div>
           )}
 
-          {/* Character */}
           <div
             className={`w-20 h-20 rounded-full flex items-center justify-center text-4xl transition-all duration-200 mt-8
-            ${section.status === "locked" ? "grayscale opacity-50" : ""}
+            ${status === "locked" ? "grayscale opacity-50" : ""}
             ${isHovered && !isDisabled ? "transform scale-110" : ""}
           `}
           >
             {section.character}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -182,14 +189,10 @@ export const SectionsView = ({
   onBack,
 }: {
   sectionsData: SectionType[];
-  onSelect: (sectionId: number | null) => void;
+  onSelect: (sectionId: number) => void;
   onBack: () => void;
 }) => {
   const handleSectionSelect = (sectionId: number) => {
-    onSelect(sectionId);
-  };
-
-  const handleJumpToSection = (sectionId: number) => {
     onSelect(sectionId);
   };
 
@@ -215,14 +218,25 @@ export const SectionsView = ({
       {/* Content */}
       <div className="max-w-2xl mx-auto p-6">
         <div className="space-y-4">
-          {sectionsData.map((section) => (
-            <SectionCard
-              key={section.id}
-              section={section}
-              onSelect={handleSectionSelect}
-              onJumpTo={handleJumpToSection}
-            />
-          ))}
+          {sectionsData.map((section, idx, arr) => {
+            const prevDone = idx === 0 ? true : arr[idx - 1].percent === 100;
+
+            const status =
+              section.percent === 100
+                ? "completed"
+                : prevDone
+                ? "default"
+                : "locked";
+
+            return (
+              <SectionCard
+                key={section.id}
+                section={section}
+                onSelect={handleSectionSelect}
+                status={status}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

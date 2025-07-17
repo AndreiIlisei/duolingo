@@ -12,7 +12,7 @@ type Props = {
   totalCount: number;
   locked?: boolean;
   current?: boolean;
-  percentage: number;
+  percentage: number | null | undefined;
 };
 
 export const LessonButton = ({
@@ -48,7 +48,6 @@ export const LessonButton = ({
 
   const href = isCompleted ? `/lesson/${id}` : "/lesson";
 
-  
   return (
     <Link
       href={href}
@@ -70,7 +69,7 @@ export const LessonButton = ({
             </div>
 
             <CircularProgressbarWithChildren
-              value={Number.isNaN(percentage) ? 0 : percentage}
+              value={percentage ?? 0}
               styles={{
                 path: {
                   stroke: "#4ade80",

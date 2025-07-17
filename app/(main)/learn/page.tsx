@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 import LearnClient from "./learnClient";
-import { getSections } from "@/queries/core/getSections";
+import { getSectionsWithProgress } from "@/queries/core/getSections";
 import {
   getUserProgress,
   getCourseProgress,
   getUserSubscription,
   getLearningPaths,
-  getUnits,
   getLessonPercentage,
 } from "@/queries/queries";
 
@@ -16,23 +15,27 @@ export default async function LearnPage() {
     userSubscription,
     courseProgress,
     learningPaths,
-    sections,
-    units,
     lessonPercentage,
   ] = await Promise.all([
     getUserProgress(),
     getUserSubscription(),
     getCourseProgress(),
     getLearningPaths(),
-    getSections(),
-    getUnits(),
     getLessonPercentage(),
   ]);
 
-  if (!userProgress?.activeCourse || !courseProgress) {
+  if (!userProgress?.activeCourse) {
     redirect("/courses");
   }
-  
+
+  // fetch section progress AFTER we know active path
+  const sectionsProgress = userProgress.activeLearningPathId
+    ? await getSectionsWithProgress(
+        userProgress.activeLearningPathId,
+        userProgress.userId
+      )
+    : [];
+
   return (
     <LearnClient
       userProgress={{
@@ -44,8 +47,7 @@ export default async function LearnPage() {
       }}
       courseProgress={courseProgress}
       learningPaths={learningPaths}
-      sections={sections}
-      units={units}
+      sectionsData={sectionsProgress}
       lessonPercentage={lessonPercentage}
     />
   );

@@ -1,4 +1,4 @@
-import { lessons, units } from "@/database/schema";
+import { challenges, lessons, units } from "@/database/schema";
 
 // Define the valid path IDs as a type
 export type PathId = "classic" | "srs" | "immersion" | "targeted";
@@ -10,17 +10,6 @@ export type LearningPathType = {
   title: string;
   description: string;
   learning_path_type: PathId;
-  // type: PathId;
-  // subtitle: string;
-  // difficulty: number;
-  // progress: number;
-  // icon: string;
-  // meta:
-  //   | { icon: string; text: string }[]
-  //   | { icon: React.ReactNode; text: string }[];
-  // badges: { text: string; variant: string }[];
-  // xpText: string;
-  // buttonText: string;
 };
 
 export type PathCardProps = {
@@ -31,15 +20,38 @@ export type PathCardProps = {
   onLeave: () => void;
 };
 
+export type LessonWithUnitAndChallenges = typeof lessons.$inferSelect & {
+  unit: typeof units.$inferSelect;
+  challenges: (typeof challenges.$inferSelect)[];
+};
+
 export type UnitTypes = {
   id: number;
   order: number;
   title: string;
   description: string;
   lessons: (typeof lessons.$inferSelect & { completed: boolean })[];
-  /** make optional */
   activeLesson?:
-    | (typeof lessons.$inferSelect & { unit: typeof units.$inferSelect })
+    | {
+        id: number;
+        title: string;
+        order: number;
+        unitId: number;
+        unit: {
+          id: number;
+          title: string;
+          order: number;
+          description: string | null;
+          sectionId: number;
+        };
+        challenges: {
+          id: number;
+          order: number;
+          lessonId: number;
+          type: "SELECT" | "ASSIST";
+          question: string;
+        }[];
+      }
     | undefined;
   activeLessonPercentage?: number | null;
 };
@@ -49,7 +61,9 @@ export type SectionType = {
   title: string;
   description: string | null;
   order: number;
-  courseId: number;
+  done: number;
+  total: number;
+  percent: number;
   learningPathId: number;
 };
 

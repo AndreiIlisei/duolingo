@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 
-export const getUnits = cache(async () => {
+export const getUnits = cache(async (sectionId: number) => {
   const { userId } = await auth();
   const userProgress = await getUserProgress();
 
@@ -15,7 +15,7 @@ export const getUnits = cache(async () => {
 
   const data = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
-    where: eq(units.sectionId, 1),
+    where: eq(units.sectionId, sectionId),
     with: {
       lessons: {
         orderBy: (lessons, { asc }) => [asc(lessons.order)],

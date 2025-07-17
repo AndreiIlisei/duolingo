@@ -1,7 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { NotebookText } from "lucide-react";
-import Link from "next/link";
-
 type Props = {
   title: string;
   description: string;
@@ -15,7 +11,7 @@ export const UnitBanner = ({ title, description }: Props) => {
         <p className="text-lg">{description}</p>
       </div>
 
-      <Link href="/lesson">
+      {/* <Link href="/lesson">
         <Button
           size="lg"
           variant="secondary"
@@ -24,7 +20,7 @@ export const UnitBanner = ({ title, description }: Props) => {
           <NotebookText className="mr-2" />
           Continue
         </Button>
-      </Link>
+      </Link> */}
     </div>
   );
 };
