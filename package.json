@@ -8,10 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "db:studio": "npx drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate",
     "db:push": "npx drizzle-kit push",
-    "db:seed": "tsx ./scripts/seed.ts",
-    "db:testing": "tsx ./scripts/testing.ts",
-    "db:prod": "tsx ./scripts/prod.ts",
+    "db:seed": "tsx ./scripts/testing.ts",
     "db:reset": "tsx ./scripts/reset.ts"
   },
   "dependencies": {
