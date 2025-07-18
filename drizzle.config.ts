@@ -8,11 +8,14 @@ export default defineConfig({
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    ssl: true,
-    host: process.env.PGHOST!,
-    port: Number(process.env.PGPORT),
-    user: process.env.PGUSER!,
-    password: process.env.PGPASSWORD!,
-    database: process.env.PGDATABASE!,
+    url: process.env.DATABASE_URL!,
   },
+  // dbCredentials: {
+  //   ssl: true,
+  //   host: process.env.PGHOST!,
+  //   port: Number(process.env.PGPORT),
+  //   user: process.env.PGUSER!,
+  //   password: process.env.PGPASSWORD!,
+  //   database: process.env.PGDATABASE!,
+  // },
 });
