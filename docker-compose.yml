@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: lingoclone_web
+    ports:
+      - "3000:3000"
+    env_file: .env.docker
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: lingo
+      POSTGRES_PASSWORD: lingopass
+      POSTGRES_DB: lingodb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

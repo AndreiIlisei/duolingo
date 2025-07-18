@@ -8,7 +8,7 @@ import { Promotions } from "@/components/promotions";
 import { Quests } from "@/components/quests";
 import LearningPaths from "./learningPath";
 import { useState } from "react";
-import { SectionsView } from "../sections/sectionPage";
+import { SectionsView } from "./sectionPage";
 import { Unit } from "./unit";
 import {
   CourseProgress,

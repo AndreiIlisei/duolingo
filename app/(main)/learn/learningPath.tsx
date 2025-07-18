@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { startTransition, useState, useTransition } from "react";
-import { Path, PathCardProps, PathId } from "./types";
+import { LearningPathType, PathCardProps, PathId } from "./types";
 import path from "path";
 import { chooseLearningPath } from "@/actions/user-progress";
 import { toast } from "sonner";
@@ -185,7 +185,7 @@ const LearningPaths = ({
   onSelect,
 }: {
   learningPathProgress: number | null;
-  learningPaths: Path[];
+  learningPaths: LearningPathType[];
   onSelect: (pathId: number) => void;
 }) => {
   const [pending, startTransition] = useTransition();

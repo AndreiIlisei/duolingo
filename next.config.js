@@ -1,6 +1,6 @@
-import type { NextConfig } from "next";
+const nextConfig = {
+  output: "standalone",
 
-const nextConfig: NextConfig = {
   async headers() {
     return [
       {
@@ -28,4 +28,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

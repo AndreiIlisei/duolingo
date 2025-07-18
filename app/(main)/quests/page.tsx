@@ -31,6 +31,7 @@ const QuestsPage = async () => {
           hearts={userProgress.hearts}
           points={userProgress.points}
           hasActiveSubscription={!!userSubscription?.isActive}
+          activeLearningPathId={userProgress.activeLearningPathId}
         />
 
         {!isPro && <Promotions />}

@@ -1,7 +1,7 @@
 "use client";
 import { ArrowLeft, Lock } from "lucide-react";
 import { useState } from "react";
-import { SectionType } from "../learn/types";
+import { SectionType } from "./types";
 
 const ProgressBar = ({
   current,
