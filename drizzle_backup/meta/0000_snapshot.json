@@ -1,74 +1,9 @@
 {
-  "id": "598fd943-82ab-4ad9-ac57-9d0deaa50174",
+  "id": "6c1232a2-4126-496d-81a2-eae15fed09c0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.learning_paths": {
-      "name": "learning_paths",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "learning_path_type": {
-          "name": "learning_path_type",
-          "type": "learning_path_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "course_id": {
-          "name": "course_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "learning_paths_course_id_courses_id_fk": {
-          "name": "learning_paths_course_id_courses_id_fk",
-          "tableFrom": "learning_paths",
-          "tableTo": "courses",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.courses": {
       "name": "courses",
       "schema": "",
@@ -90,88 +25,22 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.user_progress": {
-      "name": "user_progress",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": true,
+        },
+        "learning_path_id": {
+          "name": "learning_path_id",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": true
-        },
-        "user_name": {
-          "name": "user_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'User'"
-        },
-        "user_image_src": {
-          "name": "user_image_src",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'/mascot.svg'"
-        },
-        "hearts": {
-          "name": "hearts",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 5
-        },
-        "points": {
-          "name": "points",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "active_course_id": {
-          "name": "active_course_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "active_learning_path_id": {
-          "name": "active_learning_path_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "user_progress_active_course_id_courses_id_fk": {
-          "name": "user_progress_active_course_id_courses_id_fk",
-          "tableFrom": "user_progress",
-          "tableTo": "courses",
-          "columnsFrom": [
-            "active_course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_progress_active_learning_path_id_learning_paths_id_fk": {
-          "name": "user_progress_active_learning_path_id_learning_paths_id_fk",
-          "tableFrom": "user_progress",
+        "courses_learning_path_id_learning_paths_id_fk": {
+          "name": "courses_learning_path_id_learning_paths_id_fk",
+          "tableFrom": "courses",
           "tableTo": "learning_paths",
           "columnsFrom": [
-            "active_learning_path_id"
+            "learning_path_id"
           ],
           "columnsTo": [
             "id"
@@ -186,8 +55,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.sections": {
-      "name": "sections",
+    "public.lessons": {
+      "name": "lessons",
       "schema": "",
       "columns": {
         "id": {
@@ -202,26 +71,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "unit_id": {
+          "name": "unit_id",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "order": {
           "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "course_id": {
-          "name": "course_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "learning_path_id": {
-          "name": "learning_path_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -229,25 +86,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "sections_course_id_courses_id_fk": {
-          "name": "sections_course_id_courses_id_fk",
-          "tableFrom": "sections",
-          "tableTo": "courses",
+        "lessons_unit_id_units_id_fk": {
+          "name": "lessons_unit_id_units_id_fk",
+          "tableFrom": "lessons",
+          "tableTo": "units",
           "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "sections_learning_path_id_learning_paths_id_fk": {
-          "name": "sections_learning_path_id_learning_paths_id_fk",
-          "tableFrom": "sections",
-          "tableTo": "learning_paths",
-          "columnsFrom": [
-            "learning_path_id"
+            "unit_id"
           ],
           "columnsTo": [
             "id"
@@ -284,14 +128,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "order": {
-          "name": "order",
+        "course_id": {
+          "name": "course_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "section_id": {
-          "name": "section_id",
+        "order": {
+          "name": "order",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -299,63 +143,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "units_section_id_sections_id_fk": {
-          "name": "units_section_id_sections_id_fk",
+        "units_course_id_courses_id_fk": {
+          "name": "units_course_id_courses_id_fk",
           "tableFrom": "units",
-          "tableTo": "sections",
+          "tableTo": "courses",
           "columnsFrom": [
-            "section_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.lessons": {
-      "name": "lessons",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "unit_id": {
-          "name": "unit_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "lessons_unit_id_units_id_fk": {
-          "name": "lessons_unit_id_units_id_fk",
-          "tableFrom": "lessons",
-          "tableTo": "units",
-          "columnsFrom": [
-            "unit_id"
+            "course_id"
           ],
           "columnsTo": [
             "id"
@@ -543,6 +336,73 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.user_progress": {
+      "name": "user_progress",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_name": {
+          "name": "user_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'User'"
+        },
+        "user_image_src": {
+          "name": "user_image_src",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'/mascot.svg'"
+        },
+        "active_course_id": {
+          "name": "active_course_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hearts": {
+          "name": "hearts",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 5
+        },
+        "points": {
+          "name": "points",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_progress_active_course_id_courses_id_fk": {
+          "name": "user_progress_active_course_id_courses_id_fk",
+          "tableFrom": "user_progress",
+          "tableTo": "courses",
+          "columnsFrom": [
+            "active_course_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.user_subscription": {
       "name": "user_subscription",
       "schema": "",
@@ -613,19 +473,54 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.learning_paths": {
+      "name": "learning_paths",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "learning_path": {
+          "name": "learning_path",
+          "type": "learning_path",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
-    "public.learning_path_type": {
-      "name": "learning_path_type",
-      "schema": "public",
-      "values": [
-        "classic",
-        "srs",
-        "immersion",
-        "targeted"
-      ]
-    },
     "public.type": {
       "name": "type",
       "schema": "public",
