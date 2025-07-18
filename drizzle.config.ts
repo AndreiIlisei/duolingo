@@ -3,6 +3,13 @@ import { defineConfig } from "drizzle-kit";
 
 config({ path: ".env" });
 
+// Debug: Log environment variables
+console.log("🔍 DATABASE_URL:", process.env.DATABASE_URL);
+console.log(
+  "🔍 All ENV vars:",
+  Object.keys(process.env).filter((key) => key.includes("DATABASE"))
+);
+
 export default defineConfig({
   schema: "./database/schema.ts",
   out: "./drizzle",
@@ -10,12 +17,4 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
-  // dbCredentials: {
-  //   ssl: true,
-  //   host: process.env.PGHOST!,
-  //   port: Number(process.env.PGPORT),
-  //   user: process.env.PGUSER!,
-  //   password: process.env.PGPASSWORD!,
-  //   database: process.env.PGDATABASE!,
-  // },
 });
