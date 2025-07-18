@@ -10,7 +10,5 @@ COPY . .
 
 EXPOSE 3000
 
-RUN npm run db:migrate
-
-
-CMD [ "npm", "run", "dev" ]
+# Run migrations at startup, not during build
+CMD ["sh", "-c", "npm run db:migrate && npm run dev"]
