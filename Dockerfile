@@ -44,7 +44,6 @@ COPY --from=builder /app/public ./public
 # ✅ Copy migration-related files
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/drizzle ./drizzle
-COPY --from=builder /app/src ./src
 
 # Copy package.json and node_modules for migrations
 COPY --from=builder /app/package.json ./package.json
