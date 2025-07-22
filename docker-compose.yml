@@ -6,6 +6,8 @@ services:
     container_name: lingoclone_web
     ports:
       - "3000:3000"
+    args:
+      DATABASE_URL: ${DATABASE_URL}
     env_file: .env.docker
     depends_on:
       - db
