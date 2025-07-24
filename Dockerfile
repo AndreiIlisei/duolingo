@@ -45,6 +45,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/drizzle ./drizzle
 
+# ✅ Copy scripts folder
+COPY --from=builder /app/scripts ./scripts
+
 # Copy package.json and node_modules for migrations
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
