@@ -54,4 +54,4 @@ EXPOSE 3000
 ENV PORT=3000
 
 # Run migrations and start server
-CMD ["sh", "-c", "npm run db:migrate && node server.js"]
+CMD ["sh", "-c", "npm run db:migrate && npm run db:seed && node server.js"]
