@@ -41,12 +41,15 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# ✅ Copy migration-related files
+# ✅ Copy migration-related files and database schema logic
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/database ./database
 
 # ✅ Copy scripts folder
 COPY --from=builder /app/scripts ./scripts
+
+COPY --from=builder /app/lib ./lib
 
 # Copy package.json and node_modules for migrations
 COPY --from=builder /app/package.json ./package.json
