@@ -15,9 +15,11 @@ COPY . .
 
 # Accept a build-time flag
 ARG LOCAL_ENV=false
-
 # Conditionally copy .env.local
 RUN if [ "$LOCAL_ENV" = "true" ] && [ -f .env.local ]; then cp .env.local .env; fi
+
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 
 RUN npm run build
 
