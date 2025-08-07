@@ -21,6 +21,12 @@ RUN if [ "$LOCAL_ENV" = "true" ] && [ -f .env.local ]; then cp .env.local .env; 
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
+ARG CLERK_SECRET_KEY
+ENV CLERK_SECRET_KEY=${CLERK_SECRET_KEY}
+
+ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+
 RUN npm run build
 
 # Production image, copy all the files and run next
