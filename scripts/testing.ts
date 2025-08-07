@@ -6,6 +6,9 @@ import "dotenv/config";
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql, { schema });
 
+// console.log("THIS IS DB", process.env.DATABASE_URL);
+// console.log("THIS IS ENV", process.env.NODE_ENV);
+
 const main = async () => {
   try {
     console.log("🌱 Seeding database...");

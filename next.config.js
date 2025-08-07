@@ -1,5 +1,17 @@
 const nextConfig = {
-  output: "standalone",
+  // Environment-specific settings
+  ...(process.env.NODE_ENV === "production" && {
+    output: "standalone",
+  }),
+
+  ...(process.env.NODE_ENV === "staging" && {
+    output: "standalone",
+  }),
+
+  // Environment-specific build optimizations
+  ...(process.env.NODE_ENV === "development" && {
+    reactStrictMode: true,
+  }),
 
   // Make these available at build time and runtime
   env: {
