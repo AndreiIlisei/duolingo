@@ -2,7 +2,10 @@ version: "3.9"
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        - LOCAL_ENV=true
     container_name: lingoclone_web
     ports:
       - "3000:3000"
