@@ -10,13 +10,7 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-# COPY .env.local ./.env
 COPY . .
-
-# Accept a build-time flag
-ARG LOCAL_ENV=false
-# Conditionally copy .env.local
-RUN if [ "$LOCAL_ENV" = "true" ] && [ -f .env.local ]; then cp .env.local .env; fi
 
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
@@ -51,10 +45,9 @@ COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 
-# ✅ Copy the .env file to runtime
-# COPY --from=builder /app/.env ./.env
-
 EXPOSE 3000
 ENV PORT=3000
 
 CMD ["sh", "-c", "npm run db:migrate && npm run db:seed && node server.js"]
+
+# CMD ["node", "server.js"]

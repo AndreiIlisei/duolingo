@@ -1,6 +1,6 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 function createDatabase() {
   const databaseUrl = process.env.DATABASE_URL;
@@ -22,7 +22,9 @@ function createDatabase() {
   }
 
   try {
-    const sql = neon(databaseUrl);
+    const sql = postgres(databaseUrl, {
+      ssl: databaseUrl.includes("amazonaws.com") ? "require" : "prefer", // RDS requires SSL
+    });
     return drizzle(sql, { schema });
   } catch (error) {
     console.error("❌ Failed to create database connection:", error);

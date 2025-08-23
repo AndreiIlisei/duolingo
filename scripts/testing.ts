@@ -1,10 +1,11 @@
-import { neon } from "@neondatabase/serverless";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import { neon } from "@neondatabase/serverless";
+import db from "../database/drizzle";
 import * as schema from "../database/schema";
-import { drizzle } from "drizzle-orm/neon-http";
+// import { drizzle } from "drizzle-orm/neon-http";
 import "dotenv/config";
-
-const sql = neon(process.env.DATABASE_URL!);
-const db = drizzle(sql, { schema });
+// const sql = neon(process.env.DATABASE_URL!);
+// const db = drizzle(sql, { schema });
 
 // console.log("THIS IS DB", process.env.DATABASE_URL);
 // console.log("THIS IS ENV", process.env.NODE_ENV);
@@ -71,9 +72,11 @@ const main = async () => {
 
     const learningPaths = await db.query.learningPaths.findMany();
     const classicPath = learningPaths.find(
-      (p) => p.learning_path_type === "classic"
+      (p: any) => p.learning_path_type === "classic"
     );
-    const srsPath = learningPaths.find((p) => p.learning_path_type === "srs");
+    const srsPath = learningPaths.find(
+      (p: any) => p.learning_path_type === "srs"
+    );
 
     if (!classicPath) throw new Error("Classic learning path not found");
     if (!srsPath) throw new Error("SRS learning path not found");
