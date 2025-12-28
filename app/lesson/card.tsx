@@ -2,8 +2,8 @@
 import { challenges } from "@/database/schema";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useCallback } from "react";
-import { useAudio, useKey } from "react-use";
+import { useCallback, useRef, useEffect } from "react";
+import { useKey } from "react-use";
 
 type Props = {
   id: number;
@@ -30,14 +30,19 @@ export const Card = ({
   status,
   type,
 }: Props) => {
-  const [audio, _, controls] = useAudio({ src: audioSrc || "" });
+  const audioRef = useRef<HTMLAudioElement>(null);
   
   const handleClick = useCallback(() => {
     if (disabled) return;
 
-    controls.play();
+    if (audioSrc && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      });
+    }
     onClick();
-  }, [disabled, onClick, controls]);
+  }, [disabled, onClick, audioSrc]);
 
   useKey(shortcut, handleClick, {}, [handleClick]);
 
@@ -57,7 +62,7 @@ export const Card = ({
         type === "ASSIST" && "lg:p-3 w-full"
       )}
     >
-      {audio}
+      {audioSrc && <audio ref={audioRef} src={audioSrc} preload="auto" />}
       {imageSrc && (
         <div className="relative flex items-center justify-center aspect-square mb-4 max-h-[110px] lg:max-h-[150px] lg:max-w-[150px] w-full">
           <Image width={80} height={80} src={imageSrc} alt={text} />

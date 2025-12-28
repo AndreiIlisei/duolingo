@@ -268,19 +268,21 @@ const LearningPaths = ({
 
         {/* Learning Paths */}
         <div className="grid gap-6">
-          {learningPaths.map((path) => {
-            return (
-              <div key={path.id} data-path-card>
-                <PathCard
-                  path={path}
-                  onSelect={handlePathSelect}
-                  isHovered={hoveredCard === path.id}
-                  onHover={() => setHoveredCard(path.id)}
-                  onLeave={() => setHoveredCard(null)}
-                />
-              </div>
-            );
-          })}
+          {learningPaths
+            .filter((path) => path.learning_path_type !== "srs")
+            .map((path) => {
+              return (
+                <div key={path.id} data-path-card>
+                  <PathCard
+                    path={path}
+                    onSelect={handlePathSelect}
+                    isHovered={hoveredCard === path.id}
+                    onHover={() => setHoveredCard(path.id)}
+                    onLeave={() => setHoveredCard(null)}
+                  />
+                </div>
+              );
+            })}
         </div>
 
         {/* Achievement Popup */}

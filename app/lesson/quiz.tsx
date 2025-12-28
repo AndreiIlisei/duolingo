@@ -91,6 +91,9 @@ export const Quiz = ({
   const challenge = challenges[activeIndex];
   const options = challenge?.challengeOptions ?? [];
 
+  // Check if this is an SRS-only lesson (all challenges are flashcards)
+  const isSrsLesson = challenges.every(c => c.type === "FLASHCARD");
+
   // Play finish audio when lesson completed
   useEffect(() => {
     if (!challenge && !hasPlayedFinishAudio) {
@@ -253,6 +256,7 @@ export const Quiz = ({
         hearts={hearts}
         percentage={percentage}
         hasActiveSubscription={!!userSubscription?.isActive}
+        hideHearts={isSrsLesson}
       />
 
       <div className="flex-1">

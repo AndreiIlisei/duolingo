@@ -131,43 +131,72 @@ const main = async () => {
         title: "Spanish",
         imageSrc: "/es.svg",
       },
-    ]);
-
-    // Seed learning paths
-    await db.insert(schema.learningPaths).values([
-      {
-        id: 1,
-        learning_path_type: "classic",
-        title: "Classic Path",
-        description: "Learn through structured lessons and challenges",
-        order: 1,
-        courseId: 1,
-      },
       {
         id: 2,
-        learning_path_type: "srs",
-        title: "Spaced Repetition",
-        description: "Review based on your memory strength",
-        order: 2,
-        courseId: 1,
+        title: "French",
+        imageSrc: "/fr.svg",
       },
       {
         id: 3,
-        learning_path_type: "immersion",
-        title: "Culture Immersion",
-        description: "Learn through videos, news, and real-world content",
-        order: 3,
-        courseId: 1,
+        title: "German",
+        imageSrc: "/de.svg",
       },
       {
         id: 4,
-        learning_path_type: "targeted",
-        title: "Targeted Learning",
-        description: "Language for travelers, professionals, or specific needs",
-        order: 4,
-        courseId: 1,
+        title: "Italian",
+        imageSrc: "/it.svg",
+      },
+      {
+        id: 5,
+        title: "Portuguese",
+        imageSrc: "/pt.svg",
+      },
+      {
+        id: 6,
+        title: "Japanese",
+        imageSrc: "/jp.svg",
       },
     ]);
+
+    // Seed learning paths for all courses
+    const learningPathValues = [];
+    for (let courseId = 1; courseId <= 6; courseId++) {
+      learningPathValues.push(
+        {
+          id: (courseId - 1) * 4 + 1,
+          learning_path_type: "classic" as const,
+          title: "Classic Path",
+          description: "Learn through structured lessons and challenges",
+          order: 1,
+          courseId,
+        },
+        {
+          id: (courseId - 1) * 4 + 2,
+          learning_path_type: "srs" as const,
+          title: "Spaced Repetition",
+          description: "Review based on your memory strength",
+          order: 2,
+          courseId,
+        },
+        {
+          id: (courseId - 1) * 4 + 3,
+          learning_path_type: "immersion" as const,
+          title: "Culture Immersion",
+          description: "Learn through videos, news, and real-world content",
+          order: 3,
+          courseId,
+        },
+        {
+          id: (courseId - 1) * 4 + 4,
+          learning_path_type: "targeted" as const,
+          title: "Targeted Learning",
+          description: "Language for travelers, professionals, or specific needs",
+          order: 4,
+          courseId,
+        }
+      );
+    }
+    await db.insert(schema.learningPaths).values(learningPathValues);
 
     const learningPaths = await db.query.learningPaths.findMany();
     const classicPath = learningPaths.find(
@@ -180,221 +209,136 @@ const main = async () => {
     if (!classicPath) throw new Error("Classic learning path not found");
     if (!srsPath) throw new Error("SRS learning path not found");
 
-    // Seed sections
-    await db.insert(schema.sections).values([
-      {
-        id: 1,
-        title: "Classic - Section 1",
-        description: "Foundations",
-        order: 1,
-        courseId: 1,
-        learningPathId: classicPath.id,
-      },
-      {
-        id: 2,
-        title: "Classic - Section 2",
-        description: "Improvers",
-        order: 2,
-        courseId: 1,
-        learningPathId: classicPath.id,
-      },
-      {
-        id: 3,
-        title: "Classic - Section 3",
-        description: "Advanced",
-        order: 3,
-        courseId: 1,
-        learningPathId: classicPath.id,
-      },
-      {
-        id: 4,
-        title: "SRS - Section 1",
-        description: "Spaced Repetition",
-        order: 1,
-        courseId: 1,
-        learningPathId: srsPath.id,
-      },
-    ]);
+    // Seed sections for all courses
+    const sectionValues = [];
+    for (let courseId = 1; courseId <= 6; courseId++) {
+      const classicPathId = (courseId - 1) * 4 + 1;
+      const srsPathId = (courseId - 1) * 4 + 2;
+      
+      // Classic sections
+      sectionValues.push(
+        {
+          id: (courseId - 1) * 7 + 1,
+          title: `Classic - Section 1`,
+          description: "Foundations",
+          order: 1,
+          courseId,
+          learningPathId: classicPathId,
+        },
+        {
+          id: (courseId - 1) * 7 + 2,
+          title: `Classic - Section 2`,
+          description: "Improvers",
+          order: 2,
+          courseId,
+          learningPathId: classicPathId,
+        },
+        {
+          id: (courseId - 1) * 7 + 3,
+          title: `Classic - Section 3`,
+          description: "Advanced",
+          order: 3,
+          courseId,
+          learningPathId: classicPathId,
+        },
+        {
+          id: (courseId - 1) * 7 + 4,
+          title: `Classic - Section 4`,
+          description: "Expert",
+          order: 4,
+          courseId,
+          learningPathId: classicPathId,
+        }
+      );
+      
+      // SRS sections
+      sectionValues.push(
+        {
+          id: (courseId - 1) * 7 + 5,
+          title: "Daily Review",
+          description: "Review words due today",
+          order: 1,
+          courseId,
+          learningPathId: srsPathId,
+        },
+        {
+          id: (courseId - 1) * 7 + 6,
+          title: "Learning",
+          description: "New and recently learned words",
+          order: 2,
+          courseId,
+          learningPathId: srsPathId,
+        },
+        {
+          id: (courseId - 1) * 7 + 7,
+          title: "Mastery",
+          description: "Well-practiced vocabulary",
+          order: 3,
+          courseId,
+          learningPathId: srsPathId,
+        }
+      );
+    }
+    await db.insert(schema.sections).values(sectionValues);
 
-    // Seed units for all 3 sections
-    await db.insert(schema.units).values([
-      // Section 1 - Foundations
-      {
-        id: 1,
-        sectionId: 1,
-        title: "Basic Vocabulary",
-        description: "Learn essential Spanish words and phrases",
-        order: 1,
-      },
-      {
-        id: 2,
-        sectionId: 1,
-        title: "Grammar Basics",
-        description: "Master fundamental Spanish grammar rules",
-        order: 2,
-      },
-      {
-        id: 3,
-        sectionId: 1,
-        title: "Common Phrases",
-        description: "Learn everyday expressions and greetings",
-        order: 3,
-      },
-      {
-        id: 4,
-        sectionId: 1,
-        title: "Numbers & Time",
-        description: "Count and tell time in Spanish",
-        order: 4,
-      },
-
-      // Section 2 - Improvers
-      {
-        id: 5,
-        sectionId: 2,
-        title: "Past Tense",
-        description: "Express actions in the past",
-        order: 1,
-      },
-      {
-        id: 6,
-        sectionId: 2,
-        title: "Food & Dining",
-        description: "Navigate restaurants and cooking vocabulary",
-        order: 2,
-      },
-      {
-        id: 7,
-        sectionId: 2,
-        title: "Travel & Directions",
-        description: "Get around and ask for directions",
-        order: 3,
-      },
-      {
-        id: 8,
-        sectionId: 2,
-        title: "Family & Relationships",
-        description: "Talk about family and personal relationships",
-        order: 4,
-      },
-
-      // Section 3 - Advanced
-      {
-        id: 9,
-        sectionId: 3,
-        title: "Subjunctive Mood",
-        description: "Express doubt, emotion, and hypothetical situations",
-        order: 1,
-      },
-      {
-        id: 10,
-        sectionId: 3,
-        title: "Business Spanish",
-        description: "Professional vocabulary and formal communication",
-        order: 2,
-      },
-      {
-        id: 11,
-        sectionId: 3,
-        title: "Literature & Culture",
-        description: "Explore Spanish-speaking cultures and literature",
-        order: 3,
-      },
-      {
-        id: 12,
-        sectionId: 3,
-        title: "Idiomatic Expressions",
-        description: "Master colloquialisms and cultural expressions",
-        order: 4,
-      },
-
-      // SPACED
-      {
-        id: 13,
-        sectionId: 4,
-        title: "First test Spaced Repetition",
-        description: "First test Spaced Repetition",
-        order: 1,
+    // Seed units for all sections
+    const unitValues = [];
+    let unitId = 1;
+    
+    for (let courseId = 1; courseId <= 6; courseId++) {
+      // Classic units for 4 sections
+      for (let section = 1; section <= 4; section++) {
+        const sectionId = (courseId - 1) * 7 + section;
+        unitValues.push(
+          { id: unitId++, sectionId, title: "Basic Vocabulary", description: "Essential words", order: 1 },
+          { id: unitId++, sectionId, title: "Grammar Basics", description: "Fundamental rules", order: 2 },
+          { id: unitId++, sectionId, title: "Common Phrases", description: "Everyday expressions", order: 3 },
+          { id: unitId++, sectionId, title: "Practice", description: "Apply your knowledge", order: 4 }
+        );
       }
-    ]);
+      
+      // SRS units for 3 sections
+      for (let srsSection = 5; srsSection <= 7; srsSection++) {
+        const sectionId = (courseId - 1) * 7 + srsSection;
+        if (srsSection === 5) { // Daily Review
+          unitValues.push(
+            { id: unitId++, sectionId, title: "Due Now", description: "Words ready for review", order: 1 },
+            { id: unitId++, sectionId, title: "Overdue", description: "Catch up on missed reviews", order: 2 }
+          );
+        } else if (srsSection === 6) { // Learning
+          unitValues.push(
+            { id: unitId++, sectionId, title: "New Words", description: "Start learning new vocabulary", order: 1 },
+            { id: unitId++, sectionId, title: "Recent", description: "Words learned this week", order: 2 }
+          );
+        } else { // Mastery
+          unitValues.push(
+            { id: unitId++, sectionId, title: "Strong", description: "Well-remembered words", order: 1 },
+            { id: unitId++, sectionId, title: "Mastered", description: "Fully mastered vocabulary", order: 2 }
+          );
+        }
+      }
+    }
+    await db.insert(schema.units).values(unitValues);
 
     // Seed lessons for all units
-    await db.insert(schema.lessons).values([
-      // Unit 1 - Basic Vocabulary
-      { id: 1, unitId: 1, order: 1, title: "Nouns" },
-      { id: 2, unitId: 1, order: 2, title: "Verbs" },
-      { id: 3, unitId: 1, order: 3, title: "Adjectives" },
-      { id: 4, unitId: 1, order: 4, title: "Articles" },
-
-      // Unit 2 - Grammar Basics
-      { id: 5, unitId: 2, order: 1, title: "Verb Conjugation" },
-      { id: 6, unitId: 2, order: 2, title: "Ser vs Estar" },
-      { id: 7, unitId: 2, order: 3, title: "Question Formation" },
-      { id: 8, unitId: 2, order: 4, title: "Negation" },
-
-      // Unit 3 - Common Phrases
-      { id: 9, unitId: 3, order: 1, title: "Greetings" },
-      { id: 10, unitId: 3, order: 2, title: "Politeness" },
-      { id: 11, unitId: 3, order: 3, title: "Shopping" },
-      { id: 12, unitId: 3, order: 4, title: "Emotions" },
-
-      // Unit 4 - Numbers & Time
-      { id: 13, unitId: 4, order: 1, title: "Numbers 1-20" },
-      { id: 14, unitId: 4, order: 2, title: "Numbers 21-100" },
-      { id: 15, unitId: 4, order: 3, title: "Time" },
-      { id: 16, unitId: 4, order: 4, title: "Dates" },
-
-      // Unit 5 - Past Tense
-      { id: 17, unitId: 5, order: 1, title: "Preterite Regular" },
-      { id: 18, unitId: 5, order: 2, title: "Preterite Irregular" },
-      { id: 19, unitId: 5, order: 3, title: "Imperfect" },
-      { id: 20, unitId: 5, order: 4, title: "Past vs Present" },
-
-      // Unit 6 - Food & Dining
-      { id: 21, unitId: 6, order: 1, title: "Food Items" },
-      { id: 22, unitId: 6, order: 2, title: "At the Restaurant" },
-      { id: 23, unitId: 6, order: 3, title: "Cooking Verbs" },
-      { id: 24, unitId: 6, order: 4, title: "Dietary Preferences" },
-
-      // Unit 7 - Travel & Directions
-      { id: 25, unitId: 7, order: 1, title: "Transportation" },
-      { id: 26, unitId: 7, order: 2, title: "Asking for Directions" },
-      { id: 27, unitId: 7, order: 3, title: "Hotel & Accommodation" },
-      { id: 28, unitId: 7, order: 4, title: "Tourist Activities" },
-
-      // Unit 8 - Family & Relationships
-      { id: 29, unitId: 8, order: 1, title: "Family Members" },
-      { id: 30, unitId: 8, order: 2, title: "Personal Descriptions" },
-      { id: 31, unitId: 8, order: 3, title: "Relationships" },
-      { id: 32, unitId: 8, order: 4, title: "Life Events" },
-
-      // Unit 9 - Subjunctive Mood
-      { id: 33, unitId: 9, order: 1, title: "Present Subjunctive" },
-      { id: 34, unitId: 9, order: 2, title: "Doubt and Emotion" },
-      { id: 35, unitId: 9, order: 3, title: "Hypothetical Situations" },
-      { id: 36, unitId: 9, order: 4, title: "Commands" },
-
-      // Unit 10 - Business Spanish
-      { id: 37, unitId: 10, order: 1, title: "Office Vocabulary" },
-      { id: 38, unitId: 10, order: 2, title: "Meetings & Presentations" },
-      { id: 39, unitId: 10, order: 3, title: "Email Writing" },
-      { id: 40, unitId: 10, order: 4, title: "Negotiations" },
-
-      // Unit 11 - Literature & Culture
-      { id: 41, unitId: 11, order: 1, title: "Cultural Traditions" },
-      { id: 42, unitId: 11, order: 2, title: "Literature Basics" },
-      { id: 43, unitId: 11, order: 3, title: "Art & Music" },
-      { id: 44, unitId: 11, order: 4, title: "History" },
-
-      // Unit 12 - Idiomatic Expressions
-      { id: 45, unitId: 12, order: 1, title: "Common Idioms" },
-      { id: 46, unitId: 12, order: 2, title: "Slang & Colloquialisms" },
-      { id: 47, unitId: 12, order: 3, title: "Regional Variations" },
-      { id: 48, unitId: 12, order: 4, title: "Cultural Context" },
-
-      // Unit 12 - Idiomatic Expressions
-      { id: 49, unitId: 13, order: 1, title: "First test Spaced Repetition" },
-    ]);
+    const lessonValues = [];
+    let lessonId = 1;
+    
+    // Create lessons for each unit
+    for (let unitIndex = 0; unitIndex < unitValues.length; unitIndex++) {
+      const unit = unitValues[unitIndex];
+      const lessonCount = unit.title.includes("Practice") ? 6 : 4; // Practice units have more lessons
+      
+      for (let i = 1; i <= lessonCount; i++) {
+        lessonValues.push({
+          id: lessonId++,
+          unitId: unit.id,
+          order: i,
+          title: `${unit.title} - Lesson ${i}`
+        });
+      }
+    }
+    await db.insert(schema.lessons).values(lessonValues);
 
     // Seed challenges with variety of types
     await db.insert(schema.challenges).values([

@@ -11,11 +11,11 @@
     "db:studio:dev": "npx dotenv-cli -e .env.local -- drizzle-kit studio",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "npx drizzle-kit push",
-    "db:seed": "tsx ./scripts/testing.ts",
+    "db:seed": "npx dotenv-cli -e .env.local -- tsx ./scripts/testing.ts",
     "db:reset": "npx dotenv-cli -e .env.local -- tsx ./scripts/reset.ts",
     "db:init-srs": "npx dotenv-cli -e .env.local -- tsx ./scripts/initSrs.ts",
     "db:push:dev": "npx dotenv-cli -e .env.local -- drizzle-kit push",
-    "db:seed:dev": "npx dotenv-cli -e .env.local -- tsx scripts/reset.ts"
+    "db:seed:dev": "npx dotenv-cli -e .env.local -- tsx ./scripts/testing.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.6",
