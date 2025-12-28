@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import {
@@ -15,6 +13,7 @@ import Confetti from "react-confetti";
 
 import { Challenge } from "./challenge";
 import { QuestionBubble } from "./questionBubble";
+import { FlashcardChallenge } from "./flashcardChallenge";
 import { upsertChallengeProgress } from "@/actions/challengeProgress";
 import { maxHearts } from "@/lib/utils";
 import { toast } from "sonner";
@@ -33,6 +32,11 @@ type Props = {
   initialLessonChallenges: (typeof challenges.$inferSelect & {
     completed: boolean;
     challengeOptions: (typeof challengeOptions.$inferSelect)[];
+    srsItemId?: number;
+    term?: string;
+    meaning?: string;
+    partOfSpeech?: string | null;
+    example?: string | null;
   })[];
   userSubscription:
     | (typeof userSubscription.$inferSelect & {
@@ -160,6 +164,29 @@ export const Quiz = ({
     setActiveIndex((current) => current + 1);
   };
 
+  const onFlashcardQuality = (quality: number) => {
+    if (!challenge.srsItemId) return;
+
+    startTransition(() => {
+      // TODO: Call submitSrsReview action
+      fetch("/api/srs/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemId: challenge.srsItemId,
+          quality,
+          responseMs: 0,
+        }),
+      })
+        .then(() => {
+          correctControls.play();
+          setPercentage((prev) => prev + 100 / challenges.length);
+          onNext();
+        })
+        .catch(() => toast.error("Something went wrong"));
+    });
+  };
+
   const onContinue = () => {
     if (!selectedOption) return;
 
@@ -235,27 +262,42 @@ export const Quiz = ({
               {title}
             </h1>
             <div>
-              {challenge.type === "ASSIST" && (
-                <QuestionBubble question={challenge.question} />
+              {challenge.type === "FLASHCARD" ? (
+                <FlashcardChallenge
+                  term={challenge.term || ""}
+                  meaning={challenge.meaning || ""}
+                  partOfSpeech={challenge.partOfSpeech}
+                  example={challenge.example}
+                  onQualitySelect={onFlashcardQuality}
+                  disabled={pending}
+                />
+              ) : (
+                <>
+                  {challenge.type === "ASSIST" && (
+                    <QuestionBubble question={challenge.question} />
+                  )}
+                  <Challenge
+                    options={options}
+                    onSelect={onSelect}
+                    status={status}
+                    selectedOption={selectedOption}
+                    disabled={pending}
+                    type={challenge.type}
+                  />
+                </>
               )}
-              <Challenge
-                options={options}
-                onSelect={onSelect}
-                status={status}
-                selectedOption={selectedOption}
-                disabled={pending}
-                type={challenge.type}
-              />
             </div>
           </div>
         </div>
       </div>
 
-      <Footer
-        disabled={pending || !selectedOption}
-        status={status}
-        onCheck={onContinue}
-      />
+      {challenge.type !== "FLASHCARD" && (
+        <Footer
+          disabled={pending || !selectedOption}
+          status={status}
+          onCheck={onContinue}
+        />
+      )}
     </>
   );
 };

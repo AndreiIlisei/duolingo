@@ -49,7 +49,7 @@ export const LessonButton = ({
   const Icon = isCompleted ? Check : isLast ? Crown : Star;
 
   const href = learningPathType === "srs" 
-    ? "/smart-review/session" 
+    ? "/lesson/srs" 
     : isCompleted 
       ? `/lesson/${id}` 
       : "/lesson";

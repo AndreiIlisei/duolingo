@@ -48,7 +48,7 @@ export type UnitTypes = {
           id: number;
           order: number;
           lessonId: number;
-          type: "SELECT" | "ASSIST";
+          type: "SELECT" | "ASSIST" | "FLASHCARD";
           question: string;
         }[];
       }
@@ -86,7 +86,7 @@ export type CourseProgress = {
           id: number;
           order: number;
           lessonId: number;
-          type: "SELECT" | "ASSIST";
+          type: "SELECT" | "ASSIST" | "FLASHCARD";
           question: string;
         }[];
       }

@@ -36,16 +36,13 @@ const LearnClient = ({
   const [unitData, setUnitData] = useState<UnitTypes[] | null>(null);
   const [loadingUnits, setLoadingUnits] = useState(false);
 
-  console.log("sectionId", sectionId);
-  console.log("unit", unitData);
-
   // Check which database is being used
-  useEffect(() => {
-    fetch("/api/debug/db-info")
-      .then(res => res.json())
-      .then(data => console.log("🔍 Database Info:", data))
-      .catch(err => console.error("Failed to fetch DB info:", err));
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/debug/db-info")
+  //     .then(res => res.json())
+  //     .then(data => console.log("🔍 Database Info:", data))
+  //     .catch(err => console.error("Failed to fetch DB info:", err));
+  // }, []);
 
   // console.log("pathId", pathId);
   // console.log(" sectionsData  ", sectionsData);

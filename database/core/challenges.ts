@@ -3,7 +3,7 @@ import { integer, text } from "drizzle-orm/pg-core";
 import { challengeOptions, challengeProgress, lessons } from "../schema";
 import { relations } from "drizzle-orm";
 
-export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST"]);
+export const challengesEnum = pgEnum("type", ["SELECT", "ASSIST", "FLASHCARD"]);
 
 export const challenges = pgTable("challenges", {
   id: serial("id").primaryKey(),

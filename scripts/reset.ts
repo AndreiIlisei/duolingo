@@ -73,7 +73,15 @@ async function seedSrsFromClassic() {
 }
 
 async function main() {
+  // Get existing users BEFORE wiping data
+  const existingUsers = await db.select().from(schema.userProgress);
+  console.log(`📊 Found ${existingUsers.length} existing user(s)`);
+  if (existingUsers.length > 0) {
+    console.log(`👤 Users:`, existingUsers.map(u => ({ id: u.userId, name: u.userName })));
+  }
+
   // wipe just what we touch
+  console.log("🗑️  Deleting old data...");
   await db.delete(schema.challengeProgress);
   await db.delete(schema.challengeOptions);
   await db.delete(schema.challenges);
@@ -93,7 +101,7 @@ async function main() {
     .insert(schema.courses)
     .values([{ id: 1, title: "Spanish", imageSrc: "/es.svg" }]);
 
-  // Seed learning paths
+  // Seed learning paths (must be before user restoration due to FK constraints)
   await db.insert(schema.learningPaths).values([
     {
       id: 1,
@@ -139,6 +147,19 @@ async function main() {
 
   if (!classicPath) throw new Error("Classic learning path not found");
   if (!srsPath) throw new Error("SRS learning path not found");
+
+  // Restore existing users with updated course reference (after learning paths exist)
+  if (existingUsers.length > 0) {
+    console.log(`🔄 Restoring ${existingUsers.length} user(s)...`);
+    for (const user of existingUsers) {
+      await db.insert(schema.userProgress).values({
+        ...user,
+        activeCourseId: 1,
+        activeLearningPathId: classicPath.id,
+      }).onConflictDoNothing();
+    }
+    console.log(`✓ Users restored`);
+  }
 
   // Seed sections
   await db.insert(schema.sections).values([
@@ -238,17 +259,20 @@ async function main() {
   await seedSrsFromClassic();
   
   // Initialize SRS items for existing users
-  await initializeSrsForUsers();
+  if (existingUsers.length > 0) {
+    await initializeSrsForUsers(existingUsers);
+  } else {
+    console.log("⚠️  No users found. Please:");
+    console.log("   1. Sign in to the app first");
+    console.log("   2. Then run 'npm run db:seed' to initialize SRS items");
+  }
   
   console.log("✅ Minimal seed done.");
 }
 
-async function initializeSrsForUsers() {
-  // Get all users who have progress
-  const users = await db.select().from(schema.userProgress);
-  
+async function initializeSrsForUsers(users: any[]) {
   if (!users.length) {
-    console.log("No users found to initialize SRS items");
+    console.log("⚠️  No users found to initialize SRS items");
     return;
   }
 
@@ -269,7 +293,8 @@ async function initializeSrsForUsers() {
       intervalDays: 0,
       reps: 0,
       lapses: 0,
-      dueAt: new Date(), // due now
+      dueAt: new Date(), // due now - ready for first review
+      lastReviewAt: null, // never reviewed yet
       suspended: false,
     }));
 
@@ -282,6 +307,12 @@ async function initializeSrsForUsers() {
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-});
+main()
+  .then(() => {
+    console.log("✅ Seed completed successfully");
+    process.exit(0);
+  })
+  .catch((e) => {
+    console.error("❌ Seed failed:", e);
+    process.exit(1);
+  });
