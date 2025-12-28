@@ -60,3 +60,29 @@ export const getUnits = cache(async (sectionId: number) => {
   });
   return normalizedData;
 });
+
+export const getUnitsWithoutChallenges = async (sectionId: number) => {
+  const { userId } = await auth();
+  const userProgress = await getUserProgress();
+
+  if (!userId || !userProgress?.activeCourseId) {
+    return [];
+  }
+
+  const data = await db.query.units.findMany({
+    orderBy: (units, { asc }) => [asc(units.order)],
+    where: eq(units.sectionId, sectionId),
+    with: {
+      section: {
+        with: {
+          learningPath: true,
+        },
+      },
+      lessons: {
+        orderBy: (lessons, { asc }) => [asc(lessons.order)],
+      },
+    },
+  });
+
+  return data;
+};

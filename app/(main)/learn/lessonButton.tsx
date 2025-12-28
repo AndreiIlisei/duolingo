@@ -13,6 +13,7 @@ type Props = {
   locked?: boolean;
   current?: boolean;
   percentage: number | null | undefined;
+  learningPathType?: "classic" | "srs" | "immersion" | "targeted";
 };
 
 export const LessonButton = ({
@@ -22,6 +23,7 @@ export const LessonButton = ({
   locked,
   current,
   percentage,
+  learningPathType,
 }: Props) => {
   const cycleLength = 8;
   const cycleIndex = index % cycleLength;
@@ -46,7 +48,11 @@ export const LessonButton = ({
 
   const Icon = isCompleted ? Check : isLast ? Crown : Star;
 
-  const href = isCompleted ? `/lesson/${id}` : "/lesson";
+  const href = learningPathType === "srs" 
+    ? "/smart-review/session" 
+    : isCompleted 
+      ? `/lesson/${id}` 
+      : "/lesson";
 
   return (
     <Link

@@ -31,8 +31,6 @@ export const Card = ({
   type,
 }: Props) => {
   const [audio, _, controls] = useAudio({ src: audioSrc || "" });
-
-  console.log(imageSrc)
   
   const handleClick = useCallback(() => {
     if (disabled) return;

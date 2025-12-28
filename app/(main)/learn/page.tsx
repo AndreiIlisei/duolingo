@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import LearnClient from "./learnClient";
-import { getSectionsWithProgress } from "@/queries/core/getSections";
+import {
+  // getSections,
+  getSectionsWithProgress,
+} from "@/queries/core/getSections";
 import {
   getUserProgress,
   getCourseProgress,
@@ -16,12 +19,14 @@ export default async function LearnPage() {
     courseProgress,
     learningPaths,
     lessonPercentage,
+    // allSections,
   ] = await Promise.all([
     getUserProgress(),
     getUserSubscription(),
     getCourseProgress(),
     getLearningPaths(),
     getLessonPercentage(),
+    // getSections(),
   ]);
 
   if (!userProgress?.activeCourse) {

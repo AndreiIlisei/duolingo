@@ -8,6 +8,7 @@ export const Unit = ({
   lessons,
   activeLesson,
   activeLessonPercentage,
+  learningPathType,
 }: UnitTypes) => {
   return (
     <>
@@ -24,8 +25,9 @@ export const Unit = ({
               index={index}
               totalCount={lessons.length - 1}
               current={isCurrent}
-              locked={isLocked}
+              locked={false}
               percentage={activeLessonPercentage}
+              learningPathType={learningPathType}
             />
           );
         })}

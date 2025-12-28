@@ -2,13 +2,111 @@
 // import { neon } from "@neondatabase/serverless";
 import db from "../database/drizzle";
 import * as schema from "../database/schema";
-// import { drizzle } from "drizzle-orm/neon-http";
 import "dotenv/config";
-// const sql = neon(process.env.DATABASE_URL!);
-// const db = drizzle(sql, { schema });
+import { eq } from "drizzle-orm";
+import { and } from "drizzle-orm";
 
-// console.log("THIS IS DB", process.env.DATABASE_URL);
-// console.log("THIS IS ENV", process.env.NODE_ENV);
+function extractMeaning(q?: string | null): string | null {
+  if (!q) return null;
+  const quoted = q.match(/"([^"]+)"/);
+  if (quoted) return quoted[1];
+
+  return (
+    q
+      .replace(/Which one of these is/i, "")
+      .replace(/Select the correct translation for/i, "")
+      .replace(/[?"]/g, "")
+      .trim() || null
+  );
+}
+
+export async function seedSrsFromClassic() {
+  console.log("→ Building SRS items from Classic…");
+
+  const rows = await db
+    .select({
+      courseId: schema.sections.courseId,
+      lessonId: schema.lessons.id,
+      question: schema.challenges.question,
+      term: schema.challengeOptions.text,
+    })
+    .from(schema.challengeOptions)
+    .innerJoin(
+      schema.challenges,
+      eq(schema.challenges.id, schema.challengeOptions.challengeId)
+    )
+    .innerJoin(
+      schema.lessons,
+      eq(schema.lessons.id, schema.challenges.lessonId)
+    )
+    .innerJoin(schema.units, eq(schema.units.id, schema.lessons.unitId))
+    .innerJoin(schema.sections, eq(schema.sections.id, schema.units.sectionId))
+    .innerJoin(
+      schema.learningPaths,
+      eq(schema.learningPaths.id, schema.sections.learningPathId)
+    )
+    .where(
+      and(
+        eq(schema.challengeOptions.correct, true),
+        eq(schema.learningPaths.learning_path_type, "classic")
+      )
+    );
+
+  if (!rows.length) {
+    console.log("   No Classic content found to seed SRS.");
+    return;
+  }
+
+  // De-dupe per (courseId, term)
+  const map = new Map<
+    string,
+    {
+      courseId: number;
+      term: string;
+      meaning: string;
+      originLessonId: number | null;
+    }
+  >();
+
+  for (const r of rows) {
+    const term = r.term?.trim();
+    const meaning = extractMeaning(r.question);
+    if (!r.courseId || !term || !meaning) continue;
+
+    const key = `${r.courseId}::${term.toLowerCase()}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        courseId: r.courseId,
+        term,
+        meaning,
+        originLessonId: r.lessonId ?? null,
+      });
+    }
+  }
+
+  const items = Array.from(map.values());
+  if (!items.length) {
+    console.log("   Nothing to insert after normalization.");
+    return;
+  }
+
+  // Optional: clear SRS items for affected courses before reseeding
+  // const courseIds = [...new Set(items.map(i => i.courseId))];
+  // await db.delete(schema.srsItems).where(inArray(schema.srsItems.courseId, courseIds));
+
+  // Insert in chunks inside a transaction
+  const CHUNK = 500;
+  await db.transaction(async (tx) => {
+    for (let i = 0; i < items.length; i += CHUNK) {
+      await tx
+        .insert(schema.srsItems)
+        .values(items.slice(i, i + CHUNK))
+        .onConflictDoNothing(); // relies on unique idx (course_id, term)
+    }
+  });
+
+  console.log(`✓ SRS seed complete. Inserted ~${items.length} items.`);
+}
 
 const main = async () => {
   try {
@@ -24,6 +122,7 @@ const main = async () => {
     await db.delete(schema.challenges);
     await db.delete(schema.challengeOptions);
     await db.delete(schema.challengeProgress);
+    await db.delete(schema.srsItems);
 
     // Seed courses
     await db.insert(schema.courses).values([
@@ -208,6 +307,15 @@ const main = async () => {
         description: "Master colloquialisms and cultural expressions",
         order: 4,
       },
+
+      // SPACED
+      {
+        id: 13,
+        sectionId: 4,
+        title: "First test Spaced Repetition",
+        description: "First test Spaced Repetition",
+        order: 1,
+      }
     ]);
 
     // Seed lessons for all units
@@ -283,6 +391,9 @@ const main = async () => {
       { id: 46, unitId: 12, order: 2, title: "Slang & Colloquialisms" },
       { id: 47, unitId: 12, order: 3, title: "Regional Variations" },
       { id: 48, unitId: 12, order: 4, title: "Cultural Context" },
+
+      // Unit 12 - Idiomatic Expressions
+      { id: 49, unitId: 13, order: 1, title: "First test Spaced Repetition" },
     ]);
 
     // Seed challenges with variety of types
@@ -1566,6 +1677,7 @@ const main = async () => {
       },
     ]);
 
+    await seedSrsFromClassic();
     console.log("✅ Done seeding with expanded content for all 3 sections.");
   } catch (err) {
     console.error("❌ Seed failed:", err);

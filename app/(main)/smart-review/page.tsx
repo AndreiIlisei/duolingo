@@ -1,4 +1,3 @@
-// app/(main)/smart-review/page.tsx
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -58,16 +57,6 @@ async function getSmartReviewSummary(userId: string): Promise<Summary> {
     accuracyPct,
     xpReady,
   };
-}
-
-function extractMeaning(question?: string | null): string {
-  if (!question) return "";
-  const m = question.match(/"([^"]+)"/); // first quoted chunk
-  if (m?.[1]) return m[1];
-  return question
-    .replace(/Which one of these is/i, "")
-    .replace(/[?"]/g, "")
-    .trim();
 }
 
 // async function seedSrsFromClassic() {

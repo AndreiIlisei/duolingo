@@ -2,7 +2,7 @@ import db from "@/database/drizzle";
 import { NextResponse } from "next/server";
 import { isAuthorized } from "@/lib/adminAuth";
 import { units } from "@/database/schema";
-import { getUnits } from "@/queries/queries";
+import { getUnitsWithoutChallenges } from "@/queries/queries";
 
 export const GET = async (request: Request) => {
   if (!isAuthorized()) {
@@ -10,7 +10,7 @@ export const GET = async (request: Request) => {
   }
 
   const sectionId = Number(new URL(request.url).searchParams.get("section"));
-  const units = await getUnits(sectionId);
+  const units = await getUnitsWithoutChallenges(sectionId);
   return NextResponse.json(units);
 };
 

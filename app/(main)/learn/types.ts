@@ -54,6 +54,7 @@ export type UnitTypes = {
       }
     | undefined;
   activeLessonPercentage?: number | null;
+  learningPathType?: PathId;
 };
 
 export type SectionType = {

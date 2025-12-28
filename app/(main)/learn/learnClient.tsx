@@ -7,7 +7,7 @@ import { UserProgress, UserProgressProps } from "@/components/userProgress";
 import { Promotions } from "@/components/promotions";
 import { Quests } from "@/components/quests";
 import LearningPaths from "./learningPath";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SectionsView } from "./sectionPage";
 import { Unit } from "./unit";
 import {
@@ -35,6 +35,20 @@ const LearnClient = ({
   const [sectionId, setSection] = useState<number | null>(null);
   const [unitData, setUnitData] = useState<UnitTypes[] | null>(null);
   const [loadingUnits, setLoadingUnits] = useState(false);
+
+  console.log("sectionId", sectionId);
+  console.log("unit", unitData);
+
+  // Check which database is being used
+  useEffect(() => {
+    fetch("/api/debug/db-info")
+      .then(res => res.json())
+      .then(data => console.log("🔍 Database Info:", data))
+      .catch(err => console.error("Failed to fetch DB info:", err));
+  }, []);
+
+  // console.log("pathId", pathId);
+  // console.log(" sectionsData  ", sectionsData);
 
   async function handleSectionSelect(sectionId: number) {
     setSection(sectionId);
@@ -107,7 +121,7 @@ const LearnClient = ({
             </div>
             {sectionId &&
               unitData &&
-              unitData?.map((unit: UnitTypes) => {
+              unitData?.map((unit: any) => {
                 return (
                   <div key={unit.id} className="mb-10">
                     <Unit
@@ -118,6 +132,7 @@ const LearnClient = ({
                       lessons={unit.lessons}
                       activeLesson={courseProgress?.activeLesson}
                       activeLessonPercentage={lessonPercentage}
+                      learningPathType={unit.section?.learningPath?.learning_path_type}
                     />
                   </div>
                 );
