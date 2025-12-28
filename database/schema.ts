@@ -9,3 +9,4 @@ export * from "./core/lessons"; // needs units
 export * from "./core/challenges"; // needs lessons
 export * from "./core/challengeProgress"; // needs challenges
 export * from "./users/userSubscription"; // optional
+export * from "./srs/spacedRepetition"; // optional

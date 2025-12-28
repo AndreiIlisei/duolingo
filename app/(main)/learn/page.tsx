@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import LearnClient from "./learnClient";
-import { getSectionsWithProgress } from "@/queries/core/getSections";
+import {
+  // getSections,
+  getSectionsWithProgress,
+} from "@/queries/core/getSections";
 import {
   getUserProgress,
   getCourseProgress,
@@ -16,17 +19,22 @@ export default async function LearnPage() {
     courseProgress,
     learningPaths,
     lessonPercentage,
+    // allSections,
   ] = await Promise.all([
     getUserProgress(),
     getUserSubscription(),
     getCourseProgress(),
     getLearningPaths(),
     getLessonPercentage(),
+    // getSections(),
   ]);
 
   if (!userProgress?.activeCourse) {
     redirect("/courses");
   }
+
+  console.log("ENV", process.env.DATABASE_URL)
+  console.log("ENV", process.env.NODE_ENV)
 
   // fetch section progress AFTER we know active path
   const sectionsProgress = userProgress.activeLearningPathId

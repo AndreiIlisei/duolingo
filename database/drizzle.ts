@@ -1,3 +1,4 @@
+import "dotenv/config";
 import * as schema from "./schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -22,7 +23,7 @@ function createDatabase() {
   }
 
   try {
-    const sql = postgres(databaseUrl, {
+    const sql = postgres(databaseUrl, { 
       ssl: databaseUrl.includes("amazonaws.com") ? "require" : "prefer", // RDS requires SSL
     });
     return drizzle(sql, { schema });

@@ -36,6 +36,12 @@ const LearnClient = ({
   const [unitData, setUnitData] = useState<UnitTypes[] | null>(null);
   const [loadingUnits, setLoadingUnits] = useState(false);
 
+  console.log("sectionId", sectionId);
+  console.log("unit", unitData);
+
+  // console.log("pathId", pathId);
+  // console.log(" sectionsData  ", sectionsData);
+
   async function handleSectionSelect(sectionId: number) {
     setSection(sectionId);
     setUnitData(null);

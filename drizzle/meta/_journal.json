@@ -8,6 +8,20 @@
       "when": 1752843388950,
       "tag": "0000_cultured_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761125558946,
+      "tag": "0001_optimal_odin",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761140339101,
+      "tag": "0002_calm_archangel",
+      "breakpoints": true
     }
   ]
 }
